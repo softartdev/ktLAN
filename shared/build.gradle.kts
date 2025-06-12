@@ -38,14 +38,26 @@ kotlin {
             }
         }
     }
-    
+    sourceSets.forEach {
+        it.dependencies {
+            implementation(project.dependencies.enforcedPlatform(libs.kotlinx.coroutines.bom))
+            implementation(project.dependencies.enforcedPlatform(libs.ktor.bom))
+        }
+    }
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.napier)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+        androidMain.dependencies {
+            implementation(libs.kotlinx.coroutines.android)
         }
     }
 }

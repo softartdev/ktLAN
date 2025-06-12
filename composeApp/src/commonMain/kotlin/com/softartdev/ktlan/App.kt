@@ -6,19 +6,30 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ktlan.composeapp.generated.resources.Res
 import ktlan.composeapp.generated.resources.compose_multiplatform
@@ -33,15 +44,20 @@ fun App(
     loadingState: MutableState<Boolean> = remember { mutableStateOf(false) },
     errorState: MutableState<Boolean> = remember { mutableStateOf(false) }
 ) {
+    LaunchedEffect(Unit) { AppState.launch() }
     MaterialTheme {
         Surface {
             Column(
                 modifier = Modifier
                     .safeContentPadding()
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Button(onClick = { showContentState.value = !showContentState.value }) {
+                Button(onClick = {
+                    Napier.d("Button clicked")
+                    showContentState.value = !showContentState.value
+                }) {
                     Text("Click me!")
                 }
                 AnimatedVisibility(showContentState.value) {
@@ -54,33 +70,43 @@ fun App(
                         Text("Compose: $greeting")
                     }
                 }
-                if (loadResultState.value != null) {
-                    Text("Load result: ${loadResultState.value}")
-                }
                 if (loadingState.value) {
                     CircularProgressIndicator()
-                }
-                if (errorState.value) {
-                    Text("Error loading data", color = MaterialTheme.colorScheme.error)
-                }
-                Button(onClick = {
-                    coroutineScope.launch {
-                        loadingState.value = true
-                        errorState.value = false
-                        loadResultState.value = null
+                } else {
+                    Button(onClick = {
+                        coroutineScope.launch(Dispatchers.Default) {
+                            loadingState.value = true
+                            errorState.value = false
+                            loadResultState.value = null
 
-                        Result.runCatching { ApplicationApi().loadAbout() }
-                            .onSuccess(loadResultState::value::set)
-                            .onFailure { throwable ->
-                                throwable.printStackTrace()
-                                errorState.value = true
-                                loadResultState.value = throwable.message
-                            }
-
-                        loadingState.value = false
+                            Result.runCatching { ApplicationApi().localIp() }
+                                .onSuccess(loadResultState::value::set)
+                                .onFailure { throwable ->
+                                    Napier.e("Error loading data", throwable)
+                                    errorState.value = true
+                                    loadResultState.value = throwable.message ?: throwable.stackTraceToString()
+                                }
+                            loadingState.value = false
+                        }
+                    }) {
+                        Text(text = "Check IP")
                     }
-                }) {
-                    Text(text = if (loadingState.value) "Loading..." else "Load something")
+                }
+                loadResultState.value?.let {
+                    Text(
+                        text = it,
+                        color = when {
+                            errorState.value -> MaterialTheme.colorScheme.error
+                            else -> Color.Unspecified
+                        }
+                    )
+                }
+                if (loadResultState.value != null) {
+                    Icon(imageVector = Icons.Default.Done, contentDescription = null)
+                } else if (loadingState.value) {
+                    Icon(imageVector = Icons.Default.Download, contentDescription = null)
+                } else if (errorState.value) {
+                    Icon(imageVector = Icons.Default.Error, contentDescription = null)
                 }
             }
         }

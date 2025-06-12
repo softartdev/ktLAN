@@ -52,31 +52,37 @@ kotlin {
         }
         binaries.executable()
     }
-    
-    sourceSets {
-        val desktopMain by getting
-        
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
+    sourceSets.forEach {
+        it.dependencies {
+            implementation(project.dependencies.enforcedPlatform(libs.kotlinx.coroutines.bom))
+            implementation(project.dependencies.enforcedPlatform(libs.ktor.bom))
         }
+    }
+    sourceSets {
         commonMain.dependencies {
+            implementation(projects.shared)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(projects.shared)
+            implementation(libs.napier)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
+            implementation(compose.preview)
+        }
+        val desktopMain by getting
         desktopMain.dependencies {
+            implementation(libs.kotlinx.coroutines.swing)
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
         }
     }
 }
