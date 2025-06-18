@@ -35,7 +35,7 @@ kotlin {
     
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "composeApp"
+        outputModuleName.set("composeApp")
         browser {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
@@ -56,6 +56,7 @@ kotlin {
         it.dependencies {
             implementation(project.dependencies.enforcedPlatform(libs.kotlinx.coroutines.bom))
             implementation(project.dependencies.enforcedPlatform(libs.ktor.bom))
+            implementation(project.dependencies.enforcedPlatform(libs.koin.bom))
         }
     }
     sourceSets {
@@ -68,10 +69,11 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.material.theme.prefs)
+            implementation(libs.koin.core)
             implementation(libs.napier)
         }
         commonTest.dependencies {
