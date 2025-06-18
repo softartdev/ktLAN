@@ -1,10 +1,7 @@
 package com.softartdev.ktlan
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -32,14 +29,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ktlan.composeapp.generated.resources.Res
-import ktlan.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import ktlan.composeapp.generated.resources.app_name
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun App(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    showContentState: MutableState<Boolean> = remember { mutableStateOf(false) },
     loadResultState: MutableState<String?> = remember { mutableStateOf(null) },
     loadingState: MutableState<Boolean> = remember { mutableStateOf(false) },
     errorState: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -54,22 +50,7 @@ fun App(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Button(onClick = {
-                    Napier.d("Button clicked")
-                    showContentState.value = !showContentState.value
-                }) {
-                    Text("Click me!")
-                }
-                AnimatedVisibility(showContentState.value) {
-                    val greeting = remember { Greeting().greet() }
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(painterResource(Res.drawable.compose_multiplatform), null)
-                        Text("Compose: $greeting")
-                    }
-                }
+                Text(text = stringResource(Res.string.app_name))
                 if (loadingState.value) {
                     CircularProgressIndicator()
                 } else {
@@ -117,7 +98,6 @@ fun App(
 @Composable
 fun AppPreview() {
     App(
-        showContentState = mutableStateOf(true),
         loadResultState = mutableStateOf("Check IP result will be here"),
         loadingState = mutableStateOf(true),
         errorState = mutableStateOf(true)
