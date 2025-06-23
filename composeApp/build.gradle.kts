@@ -74,6 +74,7 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.material.theme.prefs)
             implementation(libs.koin.core)
+            implementation(libs.koin.compose.viewmodel.navigation)
             implementation(libs.napier)
         }
         commonTest.dependencies {

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">ktLAN</string>
+    <string name="start_ip">Start IP</string>
+    <string name="end_ip">End IP</string>
+    <string name="ports">Ports</string>
+    <string name="scan">Scan</string>
+    <string name="scan_in_progress">Scan in progress...</string>
+    <string name="scan_completed">Scan completed</string>
+    <string name="scan_error">Scan error</string>
+    <string name="scan_no_results">No results found</string>
 </resources>
