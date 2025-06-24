@@ -3,6 +3,7 @@
 package com.softartdev.ktlan
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,12 +13,15 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinMultiplatformApplication
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.logger.Level
 import org.koin.dsl.koinConfiguration
 
 @Composable
 fun App() = KoinMultiplatformApplication(
-    config = koinConfiguration { modules(sharedModules) }
+    config = koinConfiguration { modules(sharedModules) },
+    logLevel = Level.DEBUG
 ) {
+    LaunchedEffect(Unit) { AppState.launch() }
     PreferableMaterialTheme {
         val navController = rememberNavController()
         NavHost(

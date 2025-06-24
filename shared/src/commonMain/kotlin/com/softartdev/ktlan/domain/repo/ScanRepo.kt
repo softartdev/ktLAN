@@ -1,23 +1,79 @@
 package com.softartdev.ktlan.domain.repo
 
 import com.softartdev.ktlan.domain.model.HostModel
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
+import io.github.aakira.napier.Napier
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.timeout
+import io.ktor.client.request.get
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 class ScanRepo {
-    // TODO use a library or implement a scanning algorithm
-    suspend fun scanRange(startIp: String, endIp: String, ports: List<Int>): List<HostModel> {
-        val ipRangeList: List<String> = createRange(startIp, endIp)
-        delay(duration = 5.seconds) // Simulate network delay
-        return ipRangeList.map { ip ->
-            val openPorts: List<Int> = ports.filter { port ->
-                // Simulate port scanning logic
-                // In a real implementation, you would check if the port is open
-                // For now, we just simulate that all ports are open
-                true
+    private val client: HttpClient = HttpClient(CIO) {
+        install(Logging) {
+            level = LogLevel.BODY
+            logger = object : Logger {
+                override fun log(message: String) = Napier.d(tag = "Ktor", message = message)
             }
-            HostModel(ip, openPorts)
         }
+        followRedirects = true
+    }
+
+    // Scans a range of IP addresses for open ports parallelly using coroutines Jobs.
+    suspend fun scanRangeParallel(
+        coroutineContext: CoroutineContext,
+        startIp: String,
+        endIp: String,
+        ports: List<Int>
+    ): List<HostModel> {
+        val ipRangeList: List<String> = createRange(startIp, endIp)
+        val hosts: MutableList<HostModel> = mutableListOf()
+        val coroutineScope = CoroutineScope(coroutineContext)
+        val jobs: MutableList<Job> = mutableListOf()
+        ipRangeList.map { ip ->
+            val openPorts: MutableList<Int> = mutableListOf()
+            for (portInt: Int in ports) {
+                val job = coroutineScope.launch {
+                    Napier.d("Scanning port $portInt on $ip")
+                    try {
+                        val response = client.get {
+                            timeout {
+                                requestTimeoutMillis = 5000 // Set a timeout for the request
+                                connectTimeoutMillis = 5000 // Set a timeout for the connection
+                                socketTimeoutMillis = 5000 // Set a timeout for the socket
+                            }
+                            url { host = ip; port = portInt }
+                        }
+                        if (response.status.value in 200..299) {
+                            openPorts.add(portInt)
+                            Napier.d("Port $portInt on $ip is open")
+                        } else {
+                            Napier.d("Port $portInt on $ip is closed or unreachable")
+                        }
+                    } catch (e: ConnectTimeoutException) {
+                        Napier.e(message = e.message ?: "Connection timeout")
+                    } catch (e: Throwable) {
+                        Napier.e("Port $portInt on $ip is closed or unreachable", e)
+                    }
+                }
+                jobs.add(job)
+            }
+            if (openPorts.isNotEmpty()) {
+                hosts.add(HostModel(ip, openPorts))
+            }
+        }
+        jobs.joinAll()
+        hosts.sortBy(HostModel::ip)
+        Napier.d("Parallel scan completed for range $startIp to $endIp with ${hosts.size} hosts found.")
+        return hosts
     }
 
     private fun createRange(startIp: String, endIp: String): List<String> {

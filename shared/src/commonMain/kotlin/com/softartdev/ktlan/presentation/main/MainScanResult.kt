@@ -7,8 +7,8 @@ sealed interface MainScanResult {
     data object Loading : MainScanResult
 
     data class Success(
-        val startIp: String = "192.168.0.1",
-        val endIp: String = "192.168.0.255",
+        val startIp: String = "192.168.0.100",
+        val endIp: String = "192.168.0.125",
         val ports: List<Int> = listOf(22, 80, 443, 8080),
         val hosts: List<HostModel> = emptyList(),
     ) : MainScanResult

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.softartdev.ktlan.domain.model.HostModel
 import com.softartdev.ktlan.domain.repo.ScanRepo
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -32,7 +33,8 @@ class MainViewModel(private val scanRepo: ScanRepo) : ViewModel() {
         val scan: MainScanResult.Success = currentSuccessStateOrDefault
         mutableStateFlow.value = MainScanResult.Loading
         try {
-            val hostModels: List<HostModel> = scanRepo.scanRange(
+            val hostModels: List<HostModel> = scanRepo.scanRangeParallel(
+                coroutineContext = Dispatchers.Default,
                 startIp = scan.startIp,
                 endIp = scan.endIp,
                 ports = scan.ports
