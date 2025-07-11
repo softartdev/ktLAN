@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidLibrary)
 }
 
@@ -42,6 +43,7 @@ kotlin {
         it.dependencies {
             implementation(project.dependencies.enforcedPlatform(libs.kotlinx.coroutines.bom))
             implementation(project.dependencies.enforcedPlatform(libs.ktor.bom))
+            implementation(project.dependencies.enforcedPlatform(libs.koin.bom))
         }
     }
     sourceSets {
@@ -50,6 +52,9 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.logging)
+            implementation(libs.koin.core)
+            implementation(libs.koin.core.viewmodel)
+            implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.napier)
         }
         commonTest.dependencies {
@@ -58,6 +63,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.stream.webrtc.android)
         }
     }
 }
