@@ -67,6 +67,10 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(libs.webrtc.java)
+            runtimeOnly(libs.webrtc.java.jni)
+            runtimeOnly(libs.webrtc.java.linux.x64)
+            runtimeOnly(libs.webrtc.java.macos.x64)
+            runtimeOnly(libs.webrtc.java.windows.x64)
         }
     }
 }
