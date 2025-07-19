@@ -65,6 +65,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.stream.webrtc.android)
         }
+        jvmMain.dependencies {
+            implementation(libs.webrtc.java)
+        }
     }
 }
 
