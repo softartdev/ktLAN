@@ -1,3 +1,4 @@
+@file:OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -91,6 +92,12 @@ kotlin {
         desktopMain.dependencies {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(compose.desktop.currentOs)
+        }
+        val desktopTest by getting
+        desktopTest.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(compose.desktop.uiTestJUnit4)
+            implementation(libs.androidx.lifecycle.runtime.testing)
         }
     }
 }

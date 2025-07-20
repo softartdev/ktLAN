@@ -16,13 +16,13 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-    
+
     jvm()
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser {
@@ -64,6 +64,14 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.stream.webrtc.android)
+        }
+        jvmMain.dependencies {
+            implementation(libs.webrtc.java)
+            implementation(dependencies.variantOf(libs.webrtc.java) { classifier("windows-x86_64") })
+            implementation(dependencies.variantOf(libs.webrtc.java) { classifier("macos-aarch64") })
+            implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-x86_64") })
+            implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch64") })
+            implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch32") })
         }
     }
 }
