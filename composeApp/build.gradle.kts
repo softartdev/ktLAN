@@ -97,6 +97,7 @@ kotlin {
         desktopTest.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.desktop.uiTestJUnit4)
+            implementation(libs.androidx.lifecycle.runtime.testing)
         }
     }
 }
