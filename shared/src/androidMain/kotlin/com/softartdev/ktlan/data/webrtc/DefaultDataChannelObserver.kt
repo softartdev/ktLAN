@@ -8,21 +8,21 @@ import java.nio.charset.Charset
 
 open class DefaultDataChannelObserver(
     val channel: DataChannel,
-    val UTF_8: Charset,
+    val charset: Charset,
     val console: IConsole,
     val setState: (P2pState) -> Unit,
-    val JSON_MESSAGE: String,
+    val jsonMessage: String,
     val pc: PeerConnection
 ) : DataChannel.Observer {
-    //TODO I'm not sure if this would handle really long messages
+
     override fun onMessage(p0: DataChannel.Buffer?) {
         val buf = p0?.data
         if (buf != null) {
             val byteArray = ByteArray(buf.remaining())
             buf.get(byteArray)
-            val received = String(byteArray, UTF_8)
+            val received = String(byteArray, charset)
             try {
-                val message = JSONObject(received).getString(JSON_MESSAGE)
+                val message = JSONObject(received).getString(jsonMessage)
                 console.bluef("&gt;$message")
             } catch (e: JSONException) {
                 console.redf("Malformed message received")
@@ -39,7 +39,6 @@ open class DefaultDataChannelObserver(
         if (channel.state() == DataChannel.State.OPEN) {
             setState(P2pState.CHAT_ESTABLISHED)
             console.bluef("Chat established.")
-            // print to console current connection like "ip(1):port1 -> ... -> ip(N):port"
             val remoteAddress = pc.remoteDescription?.description ?: "unknown"
             console.printf("Connected to remote peer: $remoteAddress")
         } else {

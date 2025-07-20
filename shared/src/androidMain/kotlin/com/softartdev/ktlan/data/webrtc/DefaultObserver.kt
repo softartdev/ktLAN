@@ -8,6 +8,7 @@ abstract class DefaultObserver(
     private val console: IConsole,
     private val channel: DataChannel?
 ) : PeerConnection.Observer {
+
     override fun onDataChannel(p0: DataChannel?) {
         console.d("data channel ${p0?.label()} established")
     }
@@ -28,13 +29,17 @@ abstract class DefaultObserver(
         console.d("ice gathering state change:${p0?.name}")
     }
 
-    override fun onAddStream(p0: MediaStream?) {}
+    override fun onAddStream(p0: MediaStream?) {
+        console.d("stream added: $p0")
+    }
 
     override fun onSignalingChange(p0: PeerConnection.SignalingState?) {
         console.d("signaling state change:${p0?.name}")
     }
 
-    override fun onRemoveStream(p0: MediaStream?) {}
+    override fun onRemoveStream(p0: MediaStream?) {
+        console.d("stream removed: $p0")
+    }
 
     override fun onRenegotiationNeeded() {
         console.d("renegotiation needed")

@@ -8,19 +8,20 @@ import java.nio.charset.Charset
 
 open class DefaultDataChannelObserver(
     private val channel: RTCDataChannel,
-    private val UTF_8: Charset,
+    private val charset: Charset,
     private val console: IConsole,
     private val setState: (P2pState) -> Unit,
-    private val JSON_MESSAGE: String,
+    private val jsonMessage: String,
     private val pc: dev.onvoid.webrtc.RTCPeerConnection
 ) : RTCDataChannelObserver {
+
     override fun onMessage(buffer: RTCDataChannelBuffer?) {
         val buf: ByteBuffer? = buffer?.data
         if (buf != null) {
             val byteArray = ByteArray(buf.remaining())
             buf.get(byteArray)
-            val received = String(byteArray, UTF_8)
-            val pattern = Regex("""\"$JSON_MESSAGE\"\s*:\s*\"([^\"]*)\"""")
+            val received = String(byteArray, charset)
+            val pattern = Regex("""\"$jsonMessage\"\s*:\s*\"([^\"]*)\"""")
             val message = pattern.find(received)?.groupValues?.getOrNull(1)
             if (message != null) {
                 console.bluef("&gt;$message")

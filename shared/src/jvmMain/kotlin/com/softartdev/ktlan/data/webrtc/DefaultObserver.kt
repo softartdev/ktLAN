@@ -6,6 +6,7 @@ import dev.onvoid.webrtc.RTCIceGatheringState
 import dev.onvoid.webrtc.RTCIceConnectionState
 import dev.onvoid.webrtc.RTCSignalingState
 import dev.onvoid.webrtc.RTCIceCandidate
+import dev.onvoid.webrtc.media.MediaStream
 
 /** Observer implementation for desktop WebRTC peer connection. */
 open class DefaultObserver(
@@ -36,16 +37,16 @@ open class DefaultObserver(
         console.d("ice gathering state change:${state?.name}")
     }
 
-    override fun onAddStream(stream: dev.onvoid.webrtc.media.MediaStream?) {
-        // no-op
+    override fun onAddStream(stream: MediaStream?) {
+        console.d("stream added: $stream")
     }
 
     override fun onSignalingChange(state: RTCSignalingState?) {
         console.d("signaling state change:${state?.name}")
     }
 
-    override fun onRemoveStream(stream: dev.onvoid.webrtc.media.MediaStream?) {
-        // no-op
+    override fun onRemoveStream(stream: MediaStream?) {
+        console.d("stream removed: $stream")
     }
 
     override fun onRenegotiationNeeded() {

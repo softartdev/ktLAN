@@ -5,7 +5,9 @@ import org.webrtc.SessionDescription
 
 open class DefaultSdpObserver(private val console: IConsole) : SdpObserver {
 
-    override fun onCreateSuccess(p0: SessionDescription?) {}
+    override fun onCreateSuccess(p0: SessionDescription?) {
+        console.i("create success: $p0")
+    }
 
     override fun onCreateFailure(p0: String?) {
         console.e("failed to create offer:$p0")
