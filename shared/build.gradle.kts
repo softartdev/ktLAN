@@ -21,6 +21,7 @@ kotlin {
         }
         pod("GoogleWebRTC") {
             version = "1.1.32000"
+            moduleName = "WebRTC"
         }
     }
     androidTarget {
