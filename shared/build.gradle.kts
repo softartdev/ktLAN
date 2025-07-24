@@ -7,9 +7,19 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidLibrary)
+    id("org.jetbrains.kotlin.native.cocoapods")
 }
 
 kotlin {
+    cocoapods {
+        summary = "Shared module for ktLAN"
+        homepage = "https://example.com"
+        ios.deploymentTarget = "14.1"
+        framework {
+            baseName = "shared"
+        }
+        pod("GoogleWebRTC")
+    }
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -49,6 +59,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.logging)
@@ -64,6 +75,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.stream.webrtc.android)
+        }
+        iosMain.dependencies {
+            // GoogleWebRTC provided via CocoaPods
         }
         jvmMain.dependencies {
             implementation(libs.webrtc.java)
