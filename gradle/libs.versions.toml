@@ -72,6 +72,7 @@ qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 kscan = { module = "io.github.ismai117:KScan", version.ref = "kscan" }
 camera-compose-permission = { module = "in.procyk.compose:camera-permission", version.ref = "camera-compose-permission" }
 json = { module = "org.json:json", version.ref = "json" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.9.0" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
