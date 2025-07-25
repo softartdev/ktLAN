@@ -8,6 +8,7 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -34,8 +35,6 @@ class IOSClientWebRTC : ServerlessRTCClient() {
         optionalConstraints = mapOf("DtlsSrtpKeyAgreement" to "true")
     )
 
-    private val json = Json { ignoreUnknownKeys = true }
-
     override fun init() {
         factory = RTCPeerConnectionFactory()
         p2pState = P2pState.INITIALIZING
@@ -54,7 +53,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
 
     override fun processOffer(sdpJSON: String) {
         try {
-            val obj = json.parseToJsonElement(sdpJSON).jsonObject
+            val obj: JsonObject = Json.parseToJsonElement(sdpJSON).jsonObject
             val type = obj[JSON_TYPE]?.jsonPrimitive?.content
             val sdp = obj[JSON_SDP]?.jsonPrimitive?.content
             p2pState = P2pState.CREATING_ANSWER
@@ -100,7 +99,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                                         val nsData: NSData = didReceiveMessageWithBuffer.data
                                         val text =
                                             NSString.create(nsData, NSUTF8StringEncoding).toString()
-                                        val msgObj = json.parseToJsonElement(text).jsonObject
+                                        val msgObj = Json.parseToJsonElement(text).jsonObject
                                         val message = msgObj[JSON_MESSAGE]?.jsonPrimitive?.content
                                         if (message != null) {
                                             console.bluef(">$message")
@@ -193,7 +192,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
 
     override fun processAnswer(sdpJSON: String) {
         try {
-            val obj = json.parseToJsonElement(sdpJSON).jsonObject
+            val obj = Json.parseToJsonElement(sdpJSON).jsonObject
             val type = obj[JSON_TYPE]?.jsonPrimitive?.content
             val sdp = obj[JSON_SDP]?.jsonPrimitive?.content
             p2pState = P2pState.WAITING_TO_CONNECT
@@ -251,7 +250,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                         ) {
                             val nsData = didReceiveMessageWithBuffer.data
                             val text = NSString.create(nsData, NSUTF8StringEncoding).toString()
-                            val msgObj = json.parseToJsonElement(text).jsonObject
+                            val msgObj = Json.parseToJsonElement(text).jsonObject
                             val message = msgObj[JSON_MESSAGE]?.jsonPrimitive?.content
                             if (message != null) {
                                 console.bluef(">$message")
@@ -352,7 +351,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
             ) {
                 val nsData = didReceiveMessageWithBuffer.data
                 val text = NSString.create(nsData, NSUTF8StringEncoding).toString()
-                val obj = json.parseToJsonElement(text).jsonObject
+                val obj = Json.parseToJsonElement(text).jsonObject
                 val message = obj[JSON_MESSAGE]?.jsonPrimitive?.content
                 if (message != null) {
                     console.bluef(">$message")

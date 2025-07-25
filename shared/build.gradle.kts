@@ -90,7 +90,6 @@ kotlin {
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-x86_64") })
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch64") })
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch32") })
-            implementation(libs.json)
         }
     }
 }
