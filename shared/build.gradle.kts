@@ -6,8 +6,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
-    id("org.jetbrains.kotlin.native.cocoapods")
 }
 
 kotlin {
@@ -20,7 +20,7 @@ kotlin {
             baseName = "shared"
         }
         pod("GoogleWebRTC") {
-            version = "1.1.32000"
+            version = "~> 1.1"
             moduleName = "WebRTC"
         }
     }
