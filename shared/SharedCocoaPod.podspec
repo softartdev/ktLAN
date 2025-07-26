@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
     spec.vendored_frameworks      = 'build/cocoapods/framework/SharedFramework.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '13.0'
-    spec.dependency 'WebRTC-SDK', '125.6422.07'
+                
                 
     if !Dir.exist?('build/cocoapods/framework/SharedFramework.framework') || Dir.empty?('build/cocoapods/framework/SharedFramework.framework')
         raise "
