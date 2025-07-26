@@ -1,12 +1,14 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinCocoapods)
 }
 
 kotlin {
@@ -72,7 +74,22 @@ kotlin {
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-x86_64") })
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch64") })
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch32") })
+            implementation(libs.json)
         }
+    }
+    cocoapods {
+        name = "SharedCocoaPod"
+        version = "1.0"
+        summary = "Shared library for the Kotlin/Native module"
+        homepage = "https://github.com/softartdev/ktLAN"
+        framework {
+            baseName = "SharedFramework"
+            isStatic = false
+        }
+        xcodeConfigurationToNativeBuildType["CUSTOM_DEBUG"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] = NativeBuildType.RELEASE
+        ios.deploymentTarget = "13.0"
+        pod("WebRTC-SDK", version = "125.6422.07", moduleName = "WebRTC")
     }
 }
 

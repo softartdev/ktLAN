@@ -12,7 +12,6 @@ import org.webrtc.PeerConnectionFactory
 import org.webrtc.RtpReceiver
 import org.webrtc.SessionDescription
 import java.nio.ByteBuffer
-import java.nio.charset.Charset
 
 /**
  * This class handles all around WebRTC peer connections.
@@ -22,7 +21,6 @@ class AndroidClientWebRTC(
 ) : ServerlessRTCClient() {
     lateinit var pc: PeerConnection
     private var pcInitialized: Boolean = false
-
     var channel: DataChannel? = null
 
     /**
@@ -31,15 +29,12 @@ class AndroidClientWebRTC(
     val iceServers = arrayListOf(
         PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer()
     )
-
-    lateinit var pcf: PeerConnectionFactory
     val pcConstraints = object : MediaConstraints() {
         init {
             optional.add(KeyValuePair("DtlsSrtpKeyAgreement", "true"))
         }
     }
-
-    private val UTF_8: Charset = Charset.forName("UTF-8")
+    lateinit var pcf: PeerConnectionFactory
 
     /**
      * Call this before using anything else from PeerConnection.
@@ -100,7 +95,8 @@ class AndroidClientWebRTC(
                             super.onIceGatheringChange(p0)
                             //ICE gathering complete, we should have answer now
                             if (p0 == PeerConnection.IceGatheringState.COMPLETE) {
-                                doShowAnswer(pc.localDescription)
+                                console.printf("Here is your answer:")
+                                console.greenf("${sessionDescriptionToJSON(pc.localDescription)}")
                                 p2pState = P2pState.WAITING_TO_CONNECT
                             }
                         }
@@ -110,12 +106,12 @@ class AndroidClientWebRTC(
                             channel = p0
                             p0?.registerObserver(
                                 DefaultDataChannelObserver(
-                                    p0,
-                                    UTF_8,
-                                    console,
-                                    ::p2pState::set,
-                                    JSON_MESSAGE,
-                                    pc
+                                    channel = p0,
+                                    charset = Charsets.UTF_8,
+                                    console = console,
+                                    setState = ::p2pState::set,
+                                    jsonMessage = JSON_MESSAGE,
+                                    pc = pc
                                 )
                             )
                         }
@@ -166,11 +162,6 @@ class AndroidClientWebRTC(
         }
     }
 
-    private fun doShowAnswer(sdp: SessionDescription) {
-        console.printf("Here is your answer:")
-        console.greenf("${sessionDescriptionToJSON(sdp)}")
-    }
-
     /**
      * App creates the offer.
      */
@@ -182,11 +173,11 @@ class AndroidClientWebRTC(
             pcConstraints,
             object : DefaultObserver(console, channel) {
                 override fun onIceCandidatesRemoved(p0: Array<out IceCandidate>?) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    console.d("ice candidates removed: {${p0?.joinToString()}}")
                 }
 
                 override fun onAddTrack(p0: RtpReceiver?, p1: Array<out MediaStream>?) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    console.d("onAddTrack, p0: $p0, p1: ${p1?.joinToString()}")
                 }
 
                 override fun onIceCandidate(p0: IceCandidate?) {
@@ -222,7 +213,7 @@ class AndroidClientWebRTC(
         if (channel == null || p2pState == P2pState.CHAT_ESTABLISHED) {
             val sendJSON = JSONObject()
             sendJSON.put(JSON_MESSAGE, message)
-            val buf = ByteBuffer.wrap(sendJSON.toString().toByteArray(UTF_8))
+            val buf = ByteBuffer.wrap(sendJSON.toString().toByteArray(Charsets.UTF_8))
             channel?.send(DataChannel.Buffer(buf, false))
         } else {
             console.redf("Error. Chat is not established.")
@@ -238,10 +229,10 @@ class AndroidClientWebRTC(
         channel!!.registerObserver(
             DefaultDataChannelObserver(
                 channel = channel!!,
-                UTF_8 = UTF_8,
+                charset = Charsets.UTF_8,
                 console = console,
                 setState = ::p2pState::set,
-                JSON_MESSAGE = JSON_MESSAGE,
+                jsonMessage = JSON_MESSAGE,
                 pc = pc
             )
         )

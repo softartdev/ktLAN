@@ -26,6 +26,7 @@ webrtc-jvm = "0.12.0"
 qrose = "1.0.1"
 kscan = "0.1.0-beta08"
 camera-compose-permission = "1.6.10.1"
+json = "20250517"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -70,6 +71,7 @@ webrtc-java = { module = "dev.onvoid.webrtc:webrtc-java", version.ref = "webrtc-
 qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 kscan = { module = "io.github.ismai117:KScan", version.ref = "kscan" }
 camera-compose-permission = { module = "in.procyk.compose:camera-permission", version.ref = "camera-compose-permission" }
+json = { module = "org.json:json", version.ref = "json" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -81,3 +83,4 @@ kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
