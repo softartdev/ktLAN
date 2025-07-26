@@ -11,31 +11,17 @@ plugins {
 }
 
 kotlin {
-    cocoapods {
-        summary = "Shared module for ktLAN"
-        homepage = "https://example.com"
-        version = "1.0.0"
-        ios.deploymentTarget = "14.1"
-        framework {
-            baseName = "shared"
-        }
-        pod("GoogleWebRTC") {
-            version = "~> 1.1"
-            moduleName = "WebRTC"
-        }
-    }
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
+    jvm()
 
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-
-    jvm()
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -91,6 +77,16 @@ kotlin {
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch64") })
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch32") })
         }
+    }
+    cocoapods {
+        summary = "Shared module for ktLAN"
+        homepage = "https://github.com/softartdev/ktLAN"
+        version = "1.0.0"
+        ios.deploymentTarget = "14.1"
+        framework {
+            isStatic = true
+        }
+        pod("GoogleWebRTC", "~> 1.1", moduleName = "WebRTC")
     }
 }
 

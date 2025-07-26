@@ -2,8 +2,8 @@
 
 package com.softartdev.ktlan.data.webrtc
 
-import cocoapods.GoogleWebRTC.*
-import cocoapods.GoogleWebRTC.RTCIceServer
+import cocoapods.WebRTC.*
+import cocoapods.WebRTC.RTCIceServer
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
@@ -332,7 +332,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
         val ch = channel
         if (ch != null && p2pState == P2pState.CHAT_ESTABLISHED) {
             val text = buildJsonObject { put(JSON_MESSAGE, message) }.toString()
-            val nSString = NSString.create(text)
+            val nSString: NSString = NSString.create(text)!!
             val nsData = nSString.dataUsingEncoding(NSUTF8StringEncoding)!!
             val buffer = RTCDataBuffer(data = nsData, isBinary = false)
             ch.sendData(buffer)

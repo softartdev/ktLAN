@@ -15,8 +15,9 @@ composeHotReload = "1.0.0-beta04"
 composeMultiplatform = "1.8.2"
 materialThemePrefs = "0.9.7"
 junit = "4.13.2"
-kotlin = "2.2.0"
+kotlin = "2.1.21"
 coroutines = "1.10.2"
+kotlinx-serialization = "1.8.1"
 ktor = "3.2.2"
 logback = "1.5.18"
 koin = "4.1.0"
@@ -70,7 +71,7 @@ webrtc-java = { module = "dev.onvoid.webrtc:webrtc-java", version.ref = "webrtc-
 qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 kscan = { module = "io.github.ismai117:KScan", version.ref = "kscan" }
 camera-compose-permission = { module = "in.procyk.compose:camera-permission", version.ref = "camera-compose-permission" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.9.0" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
