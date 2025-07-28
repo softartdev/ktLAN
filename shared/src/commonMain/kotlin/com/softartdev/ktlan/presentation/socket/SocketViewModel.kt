@@ -37,27 +37,25 @@ class SocketViewModel(
     }
 
     /** Handle user actions. */
-    fun onAction(action: SocketAction) = viewModelScope.launch {
-        when (action) {
-            is SocketAction.StartServer -> startServer(action.bindHost, action.bindPort)
-            is SocketAction.Connect -> connect(action.remoteHost, action.remotePort)
-            SocketAction.StopAll -> stopAll()
-            is SocketAction.Send -> send(action.text)
-            SocketAction.ShowQrForServer -> showQr()
-            is SocketAction.ApplyQrPayload -> applyQr(action.payload)
-            is SocketAction.EditDraft -> state.update { it.copy(draft = action.newText) }
-            is SocketAction.SetBindHost -> state.update { it.copy(bindHost = action.bindHost) }
-            is SocketAction.SetBindPort -> state.update { it.copy(bindPort = action.bindPort) }
-            is SocketAction.SetRemoteHost -> state.update { it.copy(remoteHost = action.remoteHost) }
-            is SocketAction.SetRemotePort -> state.update { it.copy(remotePort = action.remotePort) }
-        }
+    fun onAction(action: SocketAction) = when (action) {
+        is SocketAction.StartServer -> startServer(action.bindHost, action.bindPort)
+        is SocketAction.Connect -> connect(action.remoteHost, action.remotePort)
+        is SocketAction.StopAll -> stopAll()
+        is SocketAction.Send -> send(action.text)
+        is SocketAction.ShowQrForServer -> showQr()
+        is SocketAction.ApplyQrPayload -> applyQr(action.payload)
+        is SocketAction.EditDraft -> state.update { it.copy(draft = action.newText) }
+        is SocketAction.SetBindHost -> state.update { it.copy(bindHost = action.bindHost) }
+        is SocketAction.SetBindPort -> state.update { it.copy(bindPort = action.bindPort) }
+        is SocketAction.SetRemoteHost -> state.update { it.copy(remoteHost = action.remoteHost) }
+        is SocketAction.SetRemotePort -> state.update { it.copy(remotePort = action.remotePort) }
     }
 
-    private suspend fun startServer(host: String, portString: String) {
+    private fun startServer(host: String, portString: String) = viewModelScope.launch {
         val port = portString.toIntOrNull()
         if (port == null) {
             state.update { it.copy(error = "Invalid port") }
-            return
+            return@launch
         }
         state.update { it.copy(loading = true, error = null) }
         runCatching { repo.startServer(host, port) }
@@ -69,11 +67,11 @@ class SocketViewModel(
             }
     }
 
-    private suspend fun connect(host: String, portString: String) {
+    private fun connect(host: String, portString: String) = viewModelScope.launch {
         val port = portString.toIntOrNull()
         if (port == null) {
             state.update { it.copy(error = "Invalid port") }
-            return
+            return@launch
         }
         state.update { it.copy(loading = true, error = null) }
         runCatching { repo.connectTo(host, port) }
@@ -85,12 +83,12 @@ class SocketViewModel(
             }
     }
 
-    private suspend fun send(text: String) {
+    private fun send(text: String) = viewModelScope.launch {
         repo.send(text)
         state.update { it.copy(draft = "") }
     }
 
-    private suspend fun stopAll() {
+    private fun stopAll() = viewModelScope.launch {
         repo.stop()
         state.update { it.copy(serverRunning = false, connected = false) }
     }
