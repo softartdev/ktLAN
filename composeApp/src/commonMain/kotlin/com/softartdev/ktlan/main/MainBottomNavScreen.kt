@@ -27,7 +27,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.softartdev.ktlan.connect.ConnectScreen
+import com.softartdev.ktlan.socket.SocketConnectScreen
 import com.softartdev.ktlan.isImeVisible
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph
 import com.softartdev.ktlan.scan.ScanScreen
@@ -63,7 +63,7 @@ fun MainBottomNavScreen(
                 }
                 composable<AppNavGraph.BottomTab.Connect> {
                     selectedTab = AppNavGraph.BottomTab.Connect
-                    ConnectScreen(connectViewModel = koinViewModel())
+                    SocketConnectScreen(socketViewModel = koinViewModel())
                 }
                 composable<AppNavGraph.BottomTab.Settings> {
                     selectedTab = AppNavGraph.BottomTab.Settings

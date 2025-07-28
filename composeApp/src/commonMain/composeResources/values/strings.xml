@@ -30,4 +30,13 @@
     <string name="scan_qr">Scan QR</string>
     <string name="cancelled">Cancelled</string>
     <string name="camera_is_not_available">Camera is not available</string>
+    <string name="bind_host">Bind host</string>
+    <string name="port">Port</string>
+    <string name="start_server">Start server</string>
+    <string name="stop">Stop</string>
+    <string name="show_qr">Show QR</string>
+    <string name="remote_host">Remote host</string>
+    <string name="connect">Connect</string>
+    <string name="type_message">Type a message…</string>
+    <string name="send">Send</string>
 </resources>
