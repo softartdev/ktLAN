@@ -11,12 +11,18 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private class TestDispatchers(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) : CoroutineDispatchers {
+private class TestCoroutineDispatchers(
+    dispatcher: CoroutineDispatcher = StandardTestDispatcher()
+) : CoroutineDispatchers {
+    constructor(scheduler: TestCoroutineScheduler) : this(
+        dispatcher = StandardTestDispatcher(scheduler)
+    )
     override val default = dispatcher
     override val main = dispatcher
     override val unconfined = dispatcher
@@ -47,9 +53,9 @@ private class FakeRouter : Router {
 class SocketViewModelTest {
     @Test
     fun testInitialStatePrefilled() = runTest {
-        val dispatchers = TestDispatchers()
-        val repo = FakeRepo(dispatchers)
-        val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(dispatchers))
+        val testDispatchers = TestCoroutineDispatchers(scheduler = testScheduler)
+        val repo = FakeRepo(testDispatchers)
+        val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(testDispatchers))
         vm.launch()
         advanceUntilIdle()
         assertEquals("192.168.0.1", vm.stateFlow.value.bindHost)
@@ -57,9 +63,9 @@ class SocketViewModelTest {
 
     @Test
     fun testSendAppendsMessage() = runTest {
-        val dispatchers = TestDispatchers()
-        val repo = FakeRepo(dispatchers)
-        val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(dispatchers))
+        val testDispatchers = TestCoroutineDispatchers(scheduler = testScheduler)
+        val repo = FakeRepo(testDispatchers)
+        val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(testDispatchers))
         vm.launch()
         vm.onAction(SocketAction.Send("hi"))
         advanceUntilIdle()
@@ -68,9 +74,9 @@ class SocketViewModelTest {
 
     @Test
     fun testApplyQrPayloadValid() = runTest {
-        val dispatchers = TestDispatchers()
-        val repo = FakeRepo(dispatchers)
-        val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(dispatchers))
+        val testDispatchers = TestCoroutineDispatchers(scheduler = testScheduler)
+        val repo = FakeRepo(testDispatchers)
+        val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(testDispatchers))
         vm.launch()
         vm.onAction(SocketAction.ApplyQrPayload("ktlan://tcp?host=1.2.3.4&port=5"))
         advanceUntilIdle()
@@ -80,9 +86,9 @@ class SocketViewModelTest {
 
     @Test
     fun testApplyQrPayloadInvalid() = runTest {
-        val dispatchers = TestDispatchers()
-        val repo = FakeRepo(dispatchers)
-        val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(dispatchers))
+        val testDispatchers = TestCoroutineDispatchers(scheduler = testScheduler)
+        val repo = FakeRepo(testDispatchers)
+        val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(testDispatchers))
         vm.launch()
         vm.onAction(SocketAction.ApplyQrPayload("wrong"))
         advanceUntilIdle()
