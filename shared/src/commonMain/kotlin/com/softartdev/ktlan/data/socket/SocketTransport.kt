@@ -1,12 +1,10 @@
 package com.softartdev.ktlan.data.socket
 
-import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
-import io.ktor.network.sockets.bind
-import io.ktor.network.sockets.connect
-import io.ktor.network.sockets.tcp
-import io.ktor.network.sockets.tryClose
+import io.ktor.network.sockets.openReadChannel
+import io.ktor.network.sockets.openWriteChannel
 import io.ktor.utils.io.CancellationException
 import io.ktor.utils.io.readUTF8Line
 import io.ktor.utils.io.writeStringUtf8
@@ -51,13 +49,13 @@ object SocketTransport {
 
     /** Starts a TCP server and waits for the first client connection. */
     suspend fun startServer(bindHost: String, bindPort: Int): Pair<ChatConnection, suspend () -> Unit> {
-        val selector = ActorSelectorManager(Dispatchers.IO)
+        val selector = SelectorManager(Dispatchers.Default)
         val serverSocket = aSocket(selector).tcp().bind(bindHost, bindPort)
         val client = serverSocket.accept()
         val connection = ChatConnection(client)
         val stop: suspend () -> Unit = {
             connection.close()
-            serverSocket.tryClose()
+            serverSocket.close()
             selector.close()
         }
         return connection to stop
@@ -65,7 +63,7 @@ object SocketTransport {
 
     /** Connects to a remote TCP server. */
     suspend fun connect(remote: SocketEndpoint): ChatConnection {
-        val selector = ActorSelectorManager(Dispatchers.IO)
+        val selector = SelectorManager(Dispatchers.Default)
         val socket = aSocket(selector).tcp().connect(remote.host, remote.port)
         return ChatConnection(socket)
     }
