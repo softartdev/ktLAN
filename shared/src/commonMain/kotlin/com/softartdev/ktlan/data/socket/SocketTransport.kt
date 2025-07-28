@@ -1,6 +1,7 @@
 package com.softartdev.ktlan.data.socket
 
 import com.softartdev.ktlan.domain.util.CoroutineDispatchers
+import io.github.aakira.napier.Napier
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.ServerSocket
@@ -51,18 +52,28 @@ class SocketTransport(private val dispatchers: CoroutineDispatchers) {
 
     /** Start server and wait for the first connection. */
     suspend fun startServer(bindHost: String, bindPort: Int): Pair<ChatConnection, suspend () -> Unit> {
+        Napier.d("Starting server on $bindHost:$bindPort")
         val server: ServerSocket = aSocket(selectorManager).tcp().bind(bindHost, bindPort)
+        Napier.d("Server started at local address: ${server.localAddress}")
         val socket: Socket = server.accept()
+        Napier.d("Accepted connection from: ${socket.remoteAddress}")
         val connection = ChatConnection(socket, dispatchers)
+        Napier.d("Connection established, ready to receive messages")
         val stop: suspend () -> Unit = {
+            Napier.d("Stopping server and closing connection")
             withContext(dispatchers.io) { server.close() }
         }
+        Napier.d("Server ready, returning connection and stop function")
         return connection to stop
     }
 
     /** Connect to remote endpoint. */
     suspend fun connect(remote: SocketEndpoint): ChatConnection {
-        val socket: Socket = aSocket(selectorManager).tcp().connect(remote.host, remote.port)
+        Napier.d("Connecting to remote endpoint: ${remote.host}:${remote.port}")
+        val socket: Socket = withContext(dispatchers.io) {
+            aSocket(selectorManager).tcp().connect(remote.host, remote.port)
+        }
+        Napier.d("Connected to remote endpoint: ${socket.remoteAddress}")
         return ChatConnection(socket, dispatchers)
     }
 

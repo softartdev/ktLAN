@@ -6,6 +6,7 @@ import com.softartdev.ktlan.data.socket.SocketTransport
 import com.softartdev.ktlan.domain.repo.SocketRepo
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph
 import com.softartdev.ktlan.presentation.navigation.Router
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -52,6 +53,7 @@ class SocketViewModel(
     }
 
     private fun startServer(host: String, portString: String) = viewModelScope.launch {
+        Napier.d("Starting server on $host:$portString")
         val port = portString.toIntOrNull()
         if (port == null) {
             state.update { it.copy(error = "Invalid port") }
@@ -60,25 +62,31 @@ class SocketViewModel(
         state.update { it.copy(loading = true, error = null) }
         runCatching { repo.startServer(host, port) }
             .onSuccess {
+                Napier.d("Server started successfully on $host:$portString")
                 state.update { it.copy(loading = false, serverRunning = true, connected = true) }
             }
             .onFailure { e ->
+                Napier.e("Failed to start server", e)
                 state.update { it.copy(loading = false, error = e.message) }
             }
     }
 
     private fun connect(host: String, portString: String) = viewModelScope.launch {
+        Napier.d("Connecting to $host:$portString")
         val port = portString.toIntOrNull()
         if (port == null) {
             state.update { it.copy(error = "Invalid port") }
+            Napier.e("Invalid port: $portString")
             return@launch
         }
         state.update { it.copy(loading = true, error = null) }
         runCatching { repo.connectTo(host, port) }
             .onSuccess {
+                Napier.d("Connected to $host:$portString")
                 state.update { it.copy(loading = false, connected = true) }
             }
             .onFailure { e ->
+                Napier.e("Failed to connect to $host:$portString", e)
                 state.update { it.copy(loading = false, error = e.message) }
             }
     }
