@@ -1,8 +1,10 @@
 package com.softartdev.ktlan.di
 
 import com.softartdev.ktlan.domain.repo.ConnectRepo
+import com.softartdev.ktlan.domain.repo.SocketRepo
 import com.softartdev.ktlan.domain.repo.ScanRepo
 import com.softartdev.ktlan.presentation.connect.ConnectViewModel
+import com.softartdev.ktlan.presentation.socket.SocketViewModel
 import com.softartdev.ktlan.presentation.scan.ScanViewModel
 import com.softartdev.ktlan.presentation.settings.SettingsViewModel
 import org.koin.core.module.Module
@@ -19,10 +21,12 @@ expect val dataModule: Module
 val domainModule: Module = module {
     factoryOf(::ScanRepo)
     singleOf(::ConnectRepo)
+    singleOf(::SocketRepo)
 }
 
 val presentationModule: Module = module {
     viewModelOf(::ScanViewModel)
     viewModelOf(::ConnectViewModel)
+    viewModelOf(::SocketViewModel)
     viewModelOf(::SettingsViewModel)
 }
