@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.softartdev.ktlan.domain.repo
 
 import com.softartdev.ktlan.data.socket.SocketEndpoint
@@ -8,16 +10,14 @@ import com.softartdev.ktlan.domain.util.CoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Repository managing a single TCP chat session.
  */
-class SocketRepo(
-    private val coroutineDispatchers: CoroutineDispatchers
-) {
+class SocketRepo(coroutineDispatchers: CoroutineDispatchers) {
     private val scope = CoroutineScope(coroutineDispatchers.default)
 
     private var serverStop: (suspend () -> Unit)? = null

@@ -1,15 +1,16 @@
 package com.softartdev.ktlan.data.socket
 
-import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
-import io.ktor.network.sockets.tcp
+import io.ktor.network.sockets.openReadChannel
+import io.ktor.network.sockets.openWriteChannel
+import io.ktor.utils.io.core.Closeable
 import io.ktor.utils.io.readUTF8Line
 import io.ktor.utils.io.writeStringUtf8
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlin.io.Closeable
 
 /**
  * Minimal TCP transport based on Ktor sockets.
@@ -54,7 +55,7 @@ object SocketTransport {
      * Returns a pair of stop handle and opened [ChatConnection].
      */
     suspend fun startServer(bindHost: String, bindPort: Int): Pair<suspend () -> Unit, ChatConnection> {
-        val selector = ActorSelectorManager(Dispatchers.IO)
+        val selector = SelectorManager(Dispatchers.Default)
         val server = aSocket(selector).tcp().bind(bindHost, bindPort)
         val socket = server.accept()
         val stop: suspend () -> Unit = {
@@ -66,7 +67,7 @@ object SocketTransport {
 
     /** Connects to the given remote endpoint. */
     suspend fun connect(remote: SocketEndpoint): ChatConnection {
-        val selector = ActorSelectorManager(Dispatchers.IO)
+        val selector = SelectorManager(Dispatchers.Default)
         val socket = aSocket(selector).tcp().connect(remote.host, remote.port)
         return ChatConnection(socket, selector)
     }
