@@ -5,9 +5,6 @@ import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.aSocket
-import io.ktor.network.sockets.tcp
-import io.ktor.network.sockets.connect
-import io.ktor.network.sockets.bind
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import io.ktor.utils.io.ByteReadChannel

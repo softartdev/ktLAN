@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -31,6 +30,7 @@ import ktlan.composeapp.generated.resources.connect
 import ktlan.composeapp.generated.resources.lan_chat
 import ktlan.composeapp.generated.resources.port
 import ktlan.composeapp.generated.resources.remote_host
+import ktlan.composeapp.generated.resources.scan_qr
 import ktlan.composeapp.generated.resources.send
 import ktlan.composeapp.generated.resources.show_qr
 import ktlan.composeapp.generated.resources.start_server

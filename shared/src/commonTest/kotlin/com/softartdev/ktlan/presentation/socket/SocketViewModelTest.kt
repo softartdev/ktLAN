@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.softartdev.ktlan.presentation.socket
 
 import com.softartdev.ktlan.domain.model.ChatMessage
@@ -6,6 +8,7 @@ import com.softartdev.ktlan.presentation.navigation.Router
 import com.softartdev.ktlan.data.socket.SocketTransport
 import com.softartdev.ktlan.domain.util.CoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -13,14 +16,14 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private class TestDispatchers(val dispatcher: CoroutineDispatcher = StandardTestDispatcher()) : CoroutineDispatchers {
+private class TestDispatchers(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) : CoroutineDispatchers {
     override val default = dispatcher
     override val main = dispatcher
     override val unconfined = dispatcher
     override val io = dispatcher
 }
 
-private class FakeRepo(private val dispatchers: CoroutineDispatchers) : SocketRepo(SocketTransport(dispatchers), dispatchers) {
+private class FakeRepo(dispatchers: CoroutineDispatchers) : SocketRepo(SocketTransport(dispatchers), dispatchers) {
     val sent = mutableListOf<String>()
     private val _messages = MutableSharedFlow<ChatMessage>()
     override fun observeMessages() = _messages
@@ -29,7 +32,6 @@ private class FakeRepo(private val dispatchers: CoroutineDispatchers) : SocketRe
     override suspend fun connectTo(remoteHost: String, remotePort: Int) {}
     override suspend fun send(text: String) { sent += text }
     override suspend fun stop() {}
-    suspend fun emitIncoming(text: String) { _messages.emit(ChatMessage(ChatMessage.Sender.Remote, text, 0)) }
 }
 
 private class FakeRouter : Router {
@@ -45,7 +47,7 @@ private class FakeRouter : Router {
 class SocketViewModelTest {
     @Test
     fun testInitialStatePrefilled() = runTest {
-        val dispatchers = TestDispatchers(testScheduler)
+        val dispatchers = TestDispatchers()
         val repo = FakeRepo(dispatchers)
         val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(dispatchers))
         vm.launch()
@@ -55,7 +57,7 @@ class SocketViewModelTest {
 
     @Test
     fun testSendAppendsMessage() = runTest {
-        val dispatchers = TestDispatchers(testScheduler)
+        val dispatchers = TestDispatchers()
         val repo = FakeRepo(dispatchers)
         val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(dispatchers))
         vm.launch()
@@ -66,7 +68,7 @@ class SocketViewModelTest {
 
     @Test
     fun testApplyQrPayloadValid() = runTest {
-        val dispatchers = TestDispatchers(testScheduler)
+        val dispatchers = TestDispatchers()
         val repo = FakeRepo(dispatchers)
         val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(dispatchers))
         vm.launch()
@@ -78,7 +80,7 @@ class SocketViewModelTest {
 
     @Test
     fun testApplyQrPayloadInvalid() = runTest {
-        val dispatchers = TestDispatchers(testScheduler)
+        val dispatchers = TestDispatchers()
         val repo = FakeRepo(dispatchers)
         val vm = SocketViewModel(FakeRouter(), repo, SocketTransport(dispatchers))
         vm.launch()

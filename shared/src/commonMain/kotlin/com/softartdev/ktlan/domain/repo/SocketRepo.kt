@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.softartdev.ktlan.domain.repo
 
 import com.softartdev.ktlan.data.socket.SocketEndpoint
@@ -11,6 +13,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Repository managing one active TCP chat session.
@@ -71,5 +75,5 @@ open class SocketRepo(
         }
     }
 
-    private fun now(): Long = kotlin.system.getTimeMillis()
+    private fun now(): Long = Clock.System.now().toEpochMilliseconds()
 }
