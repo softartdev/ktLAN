@@ -75,7 +75,7 @@ class SocketViewModelTest {
     @Test
     fun testSendAppendsMessage() = runTest(timeout = 5.seconds) {
         vm!!.launch()
-        vm!!.onAction(SocketAction.Send("hi"))
+        vm!!.send("hi")
         advanceUntilIdle()
         assertEquals(listOf("hi"), repo!!.sent)
     }
@@ -83,7 +83,7 @@ class SocketViewModelTest {
     @Test
     fun testApplyQrPayloadValid() = runTest(timeout = 5.seconds) {
         vm!!.launch()
-        vm!!.onAction(SocketAction.ApplyQrPayload("ktlan://tcp?host=1.2.3.4&port=5"))
+        vm!!.applyQr("ktlan://tcp?host=1.2.3.4&port=5")
         advanceUntilIdle()
         assertEquals("1.2.3.4", vm!!.stateFlow.value.remoteHost)
         assertEquals("5", vm!!.stateFlow.value.remotePort)
@@ -92,7 +92,7 @@ class SocketViewModelTest {
     @Test
     fun testApplyQrPayloadInvalid() = runTest(timeout = 5.seconds) {
         vm!!.launch()
-        vm!!.onAction(SocketAction.ApplyQrPayload("wrong"))
+        vm!!.applyQr("wrong")
         advanceUntilIdle()
         assertEquals("Invalid QR data", vm!!.stateFlow.value.error)
     }

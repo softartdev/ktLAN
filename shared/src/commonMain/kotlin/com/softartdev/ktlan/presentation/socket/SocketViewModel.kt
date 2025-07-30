@@ -2,7 +2,9 @@ package com.softartdev.ktlan.presentation.socket
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.softartdev.ktlan.data.socket.SocketEndpoint
 import com.softartdev.ktlan.data.socket.SocketTransport
+import com.softartdev.ktlan.domain.model.ChatMessage
 import com.softartdev.ktlan.domain.repo.SocketRepo
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph
 import com.softartdev.ktlan.presentation.navigation.Router
@@ -31,7 +33,7 @@ class SocketViewModel(
 
         updateLocalIp()
 
-        repo.observeMessages().onEach { msg ->
+        repo.observeMessages().onEach { msg: ChatMessage ->
             state.update { it.copy(messages = it.messages + msg) }
         }.launchIn(viewModelScope)
     }
@@ -43,10 +45,14 @@ class SocketViewModel(
 
     /** Handle user actions. */
     fun onAction(action: SocketAction) = when (action) {
-        is SocketAction.StartServer -> startServer(action.bindHost, action.bindPort)
-        is SocketAction.Connect -> connect(action.remoteHost, action.remotePort)
-        is SocketAction.StopAll -> stopAll()
-        is SocketAction.Send -> send(action.text)
+        is SocketAction.StartServer -> viewModelScope.launch {
+            startServer(action.bindHost, action.bindPort)
+        }
+        is SocketAction.Connect -> viewModelScope.launch {
+            connect(action.remoteHost, action.remotePort)
+        }
+        is SocketAction.StopAll -> viewModelScope.launch { stopAll() }
+        is SocketAction.Send -> viewModelScope.launch { send(action.text) }
         is SocketAction.ShowQrForServer -> showQr()
         is SocketAction.ApplyQrPayload -> applyQr(action.payload)
         is SocketAction.EditDraft -> state.update { it.copy(draft = action.newText) }
@@ -56,12 +62,12 @@ class SocketViewModel(
         is SocketAction.SetRemotePort -> state.update { it.copy(remotePort = action.remotePort) }
     }
 
-    private fun startServer(host: String, portString: String) = viewModelScope.launch {
+    suspend fun startServer(host: String, portString: String) {
         Napier.d("Starting server on $host:$portString")
-        val port = portString.toIntOrNull()
+        val port: Int? = portString.toIntOrNull()
         if (port == null) {
             state.update { it.copy(error = "Invalid port") }
-            return@launch
+            return
         }
         state.update { it.copy(loading = true, error = null) }
         runCatching { repo.startServer(host, port) }
@@ -75,13 +81,13 @@ class SocketViewModel(
             }
     }
 
-    private fun connect(host: String, portString: String) = viewModelScope.launch {
+    suspend fun connect(host: String, portString: String) {
         Napier.d("Connecting to $host:$portString")
-        val port = portString.toIntOrNull()
+        val port: Int? = portString.toIntOrNull()
         if (port == null) {
             state.update { it.copy(error = "Invalid port") }
             Napier.e("Invalid port: $portString")
-            return@launch
+            return
         }
         state.update { it.copy(loading = true, error = null) }
         runCatching { repo.connectTo(host, port) }
@@ -95,28 +101,31 @@ class SocketViewModel(
             }
     }
 
-    private fun send(text: String) = viewModelScope.launch {
+    suspend fun send(text: String) {
         repo.send(text)
         state.update { it.copy(draft = "") }
     }
 
-    private fun stopAll() = viewModelScope.launch {
+    suspend fun stopAll() {
         repo.stop()
         state.update { it.copy(serverRunning = false, connected = false) }
     }
 
-    private fun showQr() {
-        val current = state.value
+    fun showQr() {
+        val current: SocketResult = state.value
         val url = "ktlan://tcp?host=${current.bindHost}&port=${current.bindPort}&v=1"
         router.navigate(AppNavGraph.QrDialog(url))
     }
 
-    private fun applyQr(payload: String) {
-        val endpoint = transport.parse(payload)
-        if (endpoint != null) {
-            state.update { it.copy(remoteHost = endpoint.host, remotePort = endpoint.port.toString()) }
-        } else {
-            state.update { it.copy(error = "Invalid QR data") }
+    fun applyQr(payload: String) = state.update { result: SocketResult ->
+        val endpoint: SocketEndpoint? = transport.parse(payload)
+        return@update when {
+            endpoint != null -> result.copy(
+                remoteHost = endpoint.host,
+                remotePort = endpoint.port.toString(),
+                error = null
+            )
+            else -> result.copy(error = "Invalid QR data")
         }
     }
 }
