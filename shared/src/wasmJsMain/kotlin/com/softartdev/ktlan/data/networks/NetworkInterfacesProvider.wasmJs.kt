@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.flowOn
 
 actual class NetworkInterfacesProvider actual constructor(private val dispatchers: CoroutineDispatchers) {
     actual suspend fun list(): List<NetworkInterfaceInfo> = emptyList()
-    actual fun watch(): Flow<List<NetworkInterfaceInfo>> = flow { emit(emptyList()) }.flowOn(dispatchers.io)
+    actual fun watch(): Flow<List<NetworkInterfaceInfo>> = flow<List<NetworkInterfaceInfo>> { emit(emptyList()) }.flowOn(dispatchers.io)
 }
