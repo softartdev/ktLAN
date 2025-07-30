@@ -18,23 +18,27 @@ import kotlinx.coroutines.launch
 class SocketViewModel(
     private val router: Router,
     private val repo: SocketRepo,
-    private val transport: SocketTransport
+    private val transport: SocketTransport,
 ) : ViewModel() {
     private val state = MutableStateFlow(SocketResult())
     val stateFlow: StateFlow<SocketResult> = state
     private var launched = false
 
     /** Subscribe to repo and prefill local IP. */
-    fun launch() {
-        if (launched) return
+    fun launch() = viewModelScope.launch {
+        if (launched) return@launch
         launched = true
-        viewModelScope.launch {
-            val ip = repo.getLocalIp()
-            state.update { it.copy(bindHost = ip) }
-        }
+
+        updateLocalIp()
+
         repo.observeMessages().onEach { msg ->
             state.update { it.copy(messages = it.messages + msg) }
         }.launchIn(viewModelScope)
+    }
+
+    suspend fun updateLocalIp() {
+        val ip = repo.getLocalIp()
+        state.update { it.copy(bindHost = ip) }
     }
 
     /** Handle user actions. */

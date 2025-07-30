@@ -18,5 +18,23 @@ jobs:
         with:
           cache-read-only: false
           cache-overwrite-existing: true
+      - name: Cache build directories
+        id: cache-build
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/build
+          key: ${{ runner.os }}-build-cache-${{ hashFiles('**/*.gradle*','**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-build-cache-
       - name: Build
         run: ./gradlew build
+      - name: Archive build-output artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: output-build-artifacts
+          path: |
+            build/reports/problems
+            shared/build/reports
+            composeApp/build/reports
