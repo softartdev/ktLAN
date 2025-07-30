@@ -30,13 +30,13 @@ import androidx.navigation.compose.rememberNavController
 import com.softartdev.ktlan.socket.SocketConnectScreen
 import com.softartdev.ktlan.isImeVisible
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph
-import com.softartdev.ktlan.scan.ScanScreen
+import com.softartdev.ktlan.networks.NetworksScreen
 import com.softartdev.ktlan.settings.SettingsScreen
 import ktlan.composeapp.generated.resources.Res
 import ktlan.composeapp.generated.resources.app_name
 import ktlan.composeapp.generated.resources.connection
-import ktlan.composeapp.generated.resources.scan
 import ktlan.composeapp.generated.resources.settings
+import ktlan.composeapp.generated.resources.networks_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -57,9 +57,9 @@ fun MainBottomNavScreen(
                 navController = navController,
                 startDestination = startBottomTab,
             ) {
-                composable<AppNavGraph.BottomTab.Scan> {
-                    selectedTab = AppNavGraph.BottomTab.Scan
-                    ScanScreen(scanViewModel = koinViewModel())
+                composable<AppNavGraph.BottomTab.Networks> {
+                    selectedTab = AppNavGraph.BottomTab.Networks
+                    NetworksScreen(viewModel = koinViewModel())
                 }
                 composable<AppNavGraph.BottomTab.Connect> {
                     selectedTab = AppNavGraph.BottomTab.Connect
@@ -74,7 +74,7 @@ fun MainBottomNavScreen(
         bottomBar = {
             if (!WindowInsets.isImeVisible) NavigationBar {
                 sequenceOf(
-                    AppNavGraph.BottomTab.Scan,
+                    AppNavGraph.BottomTab.Networks,
                     AppNavGraph.BottomTab.Connect,
                     AppNavGraph.BottomTab.Settings
                 ).forEach { bottomTab: AppNavGraph.BottomTab ->
@@ -97,7 +97,7 @@ fun MainBottomNavScreen(
                                 text = stringResource(
                                     resource = when (bottomTab) {
                                         AppNavGraph.BottomTab.Connect -> Res.string.connection
-                                        AppNavGraph.BottomTab.Scan -> Res.string.scan
+                                        AppNavGraph.BottomTab.Networks -> Res.string.networks_title
                                         AppNavGraph.BottomTab.Settings -> Res.string.settings
                                     }
                                 )
@@ -106,7 +106,7 @@ fun MainBottomNavScreen(
                         icon = {
                             Icon(
                                 imageVector = when (bottomTab) {
-                                    AppNavGraph.BottomTab.Scan -> Icons.Default.Plagiarism
+                                    AppNavGraph.BottomTab.Networks -> Icons.Default.Plagiarism
                                     AppNavGraph.BottomTab.Connect -> Icons.Outlined.ConnectWithoutContact
                                     AppNavGraph.BottomTab.Settings -> Icons.Default.Settings
                                 },
