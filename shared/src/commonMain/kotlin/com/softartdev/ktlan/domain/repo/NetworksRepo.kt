@@ -6,13 +6,13 @@ import com.softartdev.ktlan.domain.util.CoroutineDispatchers
 import kotlinx.coroutines.withContext
 
 /** Repository providing network interface information. */
-class NetworksRepo(
+open class NetworksRepo(
     private val provider: NetworkInterfacesProvider,
     private val dispatchers: CoroutineDispatchers
 ) {
-    suspend fun listInterfaces(): List<NetworkInterfaceInfo> = provider.list()
+    open suspend fun listInterfaces(): List<NetworkInterfaceInfo> = provider.list()
 
-    suspend fun guessLocalIPv4(): String? {
+    open suspend fun guessLocalIPv4(): String? {
         val interfaces = provider.list()
         val filtered = interfaces.filter { it.isUp && !it.isLoopback }
         val addresses = filtered.flatMap { it.ipv4 }

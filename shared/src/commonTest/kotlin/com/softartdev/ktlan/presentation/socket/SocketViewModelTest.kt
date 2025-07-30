@@ -2,8 +2,11 @@
 
 package com.softartdev.ktlan.presentation.socket
 
+import com.softartdev.ktlan.data.networks.NetworkInterfacesProvider
 import com.softartdev.ktlan.data.socket.SocketTransport
 import com.softartdev.ktlan.domain.model.ChatMessage
+import com.softartdev.ktlan.domain.model.NetworkInterfaceInfo
+import com.softartdev.ktlan.domain.repo.NetworksRepo
 import com.softartdev.ktlan.domain.repo.SocketRepo
 import com.softartdev.ktlan.domain.util.CoroutineDispatchers
 import com.softartdev.ktlan.presentation.navigation.Router
@@ -41,6 +44,14 @@ private class FakeRouter : Router {
     override fun popBackStack() = false
 }
 
+private class FakeNetworkRepo(dispatchers: CoroutineDispatchers) : NetworksRepo(
+    provider = NetworkInterfacesProvider(dispatchers),
+    dispatchers = dispatchers
+) {
+    override suspend fun listInterfaces(): List<NetworkInterfaceInfo> = emptyList()
+    override suspend fun guessLocalIPv4(): String? = "192.168.0.1"
+}
+
 class SocketViewModelTest {
     private var testDispatchers: CoroutineDispatchersStub? = null
     private var repo: FakeRepo? = null
@@ -51,7 +62,8 @@ class SocketViewModelTest {
         Napier.base(PrintAntilog())
         testDispatchers = CoroutineDispatchersStub()
         repo = FakeRepo(testDispatchers!!)
-        vm = SocketViewModel(FakeRouter(), repo!!, SocketTransport(testDispatchers!!))
+        val networksRepo = FakeNetworkRepo(testDispatchers!!)
+        vm = SocketViewModel(FakeRouter(), repo!!, SocketTransport(testDispatchers!!), networksRepo)
     }
 
     @AfterTest
