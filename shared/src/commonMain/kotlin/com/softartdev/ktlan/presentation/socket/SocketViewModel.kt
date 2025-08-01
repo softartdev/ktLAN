@@ -6,6 +6,7 @@ import com.softartdev.ktlan.data.socket.SocketEndpoint
 import com.softartdev.ktlan.data.socket.SocketTransport
 import com.softartdev.ktlan.domain.model.ChatMessage
 import com.softartdev.ktlan.domain.repo.SocketRepo
+import com.softartdev.ktlan.domain.repo.NetworksRepo
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph
 import com.softartdev.ktlan.presentation.navigation.Router
 import io.github.aakira.napier.Napier
@@ -21,6 +22,7 @@ class SocketViewModel(
     private val router: Router,
     private val repo: SocketRepo,
     private val transport: SocketTransport,
+    private val networksRepo: NetworksRepo,
 ) : ViewModel() {
     private val state = MutableStateFlow(SocketResult())
     val stateFlow: StateFlow<SocketResult> = state
@@ -39,7 +41,7 @@ class SocketViewModel(
     }
 
     suspend fun updateLocalIp() {
-        val ip = repo.getLocalIp()
+        val ip = networksRepo.guessLocalIPv4() ?: repo.getLocalIp()
         state.update { it.copy(bindHost = ip) }
     }
 

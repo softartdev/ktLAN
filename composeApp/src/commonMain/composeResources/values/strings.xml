@@ -41,4 +41,18 @@
     <string name="type_message">Type a message…</string>
     <string name="send">Send</string>
     <string name="your_ip">Your IP</string>
+    <string name="networks_title">Networks</string>
+    <string name="networks_refresh">Refresh</string>
+    <string name="networks_no_items">No interfaces found</string>
+    <string name="networks_interface">Interface</string>
+    <string name="networks_flags">Flags</string>
+    <string name="networks_flag_up">Up</string>
+    <string name="networks_flag_loopback">Loopback</string>
+    <string name="networks_flag_multicast">Multicast</string>
+    <string name="networks_ipv4">IPv4</string>
+    <string name="networks_ipv6">IPv6</string>
+    <string name="networks_copy">Copy</string>
+    <string name="networks_use">Use</string>
+    <string name="networks_your_ip">Your IP</string>
+    <string name="networks_show_all">Show all</string>
 </resources>

@@ -7,7 +7,7 @@ sealed interface AppNavGraph {
     sealed interface BottomTab : AppNavGraph {
 
         @Serializable
-        data object Scan : BottomTab
+        data object Networks : BottomTab
 
         @Serializable
         data object Connect : BottomTab

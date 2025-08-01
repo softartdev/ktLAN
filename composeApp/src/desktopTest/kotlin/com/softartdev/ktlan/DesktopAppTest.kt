@@ -22,7 +22,7 @@ class DesktopAppTest {
             }
         }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Scan").assertExists()
+        composeTestRule.onNodeWithText("Networks").assertExists()
         composeTestRule.onNodeWithText("Settings").assertExists()
     }
 }
