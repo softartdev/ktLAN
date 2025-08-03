@@ -18,7 +18,7 @@ import platform.Foundation.dataUsingEncoding
 import platform.darwin.NSObject
 
 class IOSClientWebRTC : ServerlessRTCClient() {
-    private lateinit var factory: RTCPeerConnectionFactory
+    private var factory: RTCPeerConnectionFactory = RTCPeerConnectionFactory()
     private lateinit var pc: RTCPeerConnection
     private var channel: RTCDataChannel? = null
     private var pcInitialized: Boolean = false
@@ -31,11 +31,6 @@ class IOSClientWebRTC : ServerlessRTCClient() {
         mandatoryConstraints = null,
         optionalConstraints = mapOf("DtlsSrtpKeyAgreement" to "true")
     )
-
-    override fun init() {
-        factory = RTCPeerConnectionFactory()
-        p2pState = P2pState.INITIALIZING
-    }
 
     private fun sessionDescriptionToJSON(sessDesc: RTCSessionDescription): String {
         val typeString = when (sessDesc.type) {

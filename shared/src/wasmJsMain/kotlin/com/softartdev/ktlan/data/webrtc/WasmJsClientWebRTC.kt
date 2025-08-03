@@ -1,7 +1,6 @@
 package com.softartdev.ktlan.data.webrtc
 
 class WasmJsClientWebRTC() : ServerlessRTCClient() {
-    override fun init() = console.d("init()") // TODO
     override fun processOffer(sdpJSON: String) = console.d("processOffer()") // TODO
     override fun processAnswer(sdpJSON: String) = console.d("processAnswer()") // TODO
     override fun makeOffer() = console.d("makeOffer()") // TODO

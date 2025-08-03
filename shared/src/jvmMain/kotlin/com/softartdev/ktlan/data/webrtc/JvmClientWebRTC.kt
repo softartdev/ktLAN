@@ -21,8 +21,7 @@ import java.nio.ByteBuffer
  * WebRTC client implementation for desktop JVM platform.
  */
 class JvmClientWebRTC : ServerlessRTCClient() {
-
-    private lateinit var factory: PeerConnectionFactory
+    private var factory: PeerConnectionFactory = PeerConnectionFactory()
     private lateinit var pc: RTCPeerConnection
     private var pcInitialized: Boolean = false
 
@@ -32,11 +31,6 @@ class JvmClientWebRTC : ServerlessRTCClient() {
     private val iceServers: List<RTCIceServer> = listOf(
         RTCIceServer().apply { urls = listOf("stun:stun.l.google.com:19302") }
     )
-
-    override fun init() {
-        factory = PeerConnectionFactory()
-        p2pState = P2pState.INITIALIZING
-    }
 
     /**
      * Converts session description object to JSON object that can be used in other applications.

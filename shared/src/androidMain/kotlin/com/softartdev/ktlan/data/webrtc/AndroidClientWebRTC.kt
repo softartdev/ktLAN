@@ -17,7 +17,7 @@ import java.nio.ByteBuffer
  * This class handles all around WebRTC peer connections.
  */
 class AndroidClientWebRTC(
-    private val context: Context,
+    context: Context,
 ) : ServerlessRTCClient() {
     lateinit var pc: PeerConnection
     private var pcInitialized: Boolean = false
@@ -36,10 +36,7 @@ class AndroidClientWebRTC(
     }
     lateinit var pcf: PeerConnectionFactory
 
-    /**
-     * Call this before using anything else from PeerConnection.
-     */
-    override fun init() {
+    init {
         val initializeOptions = PeerConnectionFactory.InitializationOptions
             .builder(context)
             /*.setEnableVideoHwAcceleration(false)*/
@@ -48,7 +45,6 @@ class AndroidClientWebRTC(
         PeerConnectionFactory.initialize(initializeOptions)
         val options = PeerConnectionFactory.Options()
         pcf = PeerConnectionFactory.builder().setOptions(options).createPeerConnectionFactory()
-        p2pState = P2pState.INITIALIZING
     }
 
     /**
