@@ -82,9 +82,7 @@ kotlin {
             implementation(libs.kscan)
             implementation(libs.camera.compose.permission)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
+//        commonTest.dependencies { implementation(libs.kotlin.test) } // FIXME revert composeApp/src/commonTest
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
             implementation(compose.preview)
