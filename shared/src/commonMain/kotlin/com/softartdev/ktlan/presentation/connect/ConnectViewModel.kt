@@ -59,8 +59,6 @@ class ConnectViewModel(
                 )
             }
         }.launchIn(viewModelScope)
-
-        connectRepo.init()
     }
 
     fun onAction(action: ConnectAction) = viewModelScope.launch {

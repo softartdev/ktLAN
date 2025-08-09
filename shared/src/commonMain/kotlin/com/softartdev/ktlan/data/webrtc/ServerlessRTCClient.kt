@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.StateFlow
 abstract class ServerlessRTCClient(
     var console: IConsole = LogConsole(),
 ) {
-    private val p2pMutableStateFlow: MutableStateFlow<P2pState?> = MutableStateFlow(null)
+    private val p2pMutableStateFlow: MutableStateFlow<P2pState?> = MutableStateFlow(
+        value = P2pState.INITIALIZING
+    )
     val p2pStateFlow: StateFlow<P2pState?> = p2pMutableStateFlow
 
     var p2pState: P2pState?
@@ -14,10 +16,6 @@ abstract class ServerlessRTCClient(
             p2pMutableStateFlow.value = value
         }
         get() = p2pStateFlow.value
-    /**
-     * Call this before using anything else from PeerConnection.
-     */
-    abstract fun init()
 
     /**
      * Wait for an offer to be entered by user.

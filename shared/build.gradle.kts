@@ -90,6 +90,7 @@ kotlin {
         xcodeConfigurationToNativeBuildType["CUSTOM_DEBUG"] = NativeBuildType.DEBUG
         xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] = NativeBuildType.RELEASE
         ios.deploymentTarget = "13.0"
+        pod("WebRTC-SDK", version = "125.6422.07", moduleName = "WebRTC")
     }
 }
 
