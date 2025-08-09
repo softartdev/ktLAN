@@ -2,8 +2,25 @@
 
 package com.softartdev.ktlan.data.webrtc
 
-import cocoapods.WebRTC.*
+import cocoapods.WebRTC.RTCConfiguration
+import cocoapods.WebRTC.RTCDataBuffer
+import cocoapods.WebRTC.RTCDataChannel
+import cocoapods.WebRTC.RTCDataChannelConfiguration
+import cocoapods.WebRTC.RTCDataChannelDelegateProtocol
+import cocoapods.WebRTC.RTCDataChannelState
+import cocoapods.WebRTC.RTCIceCandidate
+import cocoapods.WebRTC.RTCIceConnectionState
+import cocoapods.WebRTC.RTCIceGatheringState
 import cocoapods.WebRTC.RTCIceServer
+import cocoapods.WebRTC.RTCMediaConstraints
+import cocoapods.WebRTC.RTCMediaStream
+import cocoapods.WebRTC.RTCPeerConnection
+import cocoapods.WebRTC.RTCPeerConnectionDelegateProtocol
+import cocoapods.WebRTC.RTCPeerConnectionFactory
+import cocoapods.WebRTC.RTCSdpType
+import cocoapods.WebRTC.RTCSessionDescription
+import cocoapods.WebRTC.RTCSignalingState
+import cocoapods.WebRTC.dataChannelForLabel
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
@@ -49,7 +66,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
 
     override fun processOffer(sdpJSON: String) {
         try {
-            val nsData: NSData = NSString.create(sdpJSON)!!.dataUsingEncoding(NSUTF8StringEncoding)!!
+            val nsData: NSData = NSString.create(sdpJSON).dataUsingEncoding(NSUTF8StringEncoding)!!
             val obj: Map<*, *> = NSJSONSerialization.JSONObjectWithData(
                 data = nsData,
                 options = NSJSONWritingPrettyPrinted,
@@ -57,7 +74,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
             ) as Map<*, *>
             val type = obj[JSON_TYPE] as? String
             val sdp = obj[JSON_SDP] as? String
-            (this as ServerlessRTCClient).p2pState = P2pState.CREATING_ANSWER
+            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CREATING_ANSWER
             if (type == "offer" && sdp != null) {
                 pcInitialized = true
                 val config = RTCConfiguration()
@@ -74,7 +91,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                             if (didChangeIceGatheringState == RTCIceGatheringState.RTCIceGatheringStateComplete) {
                                 console.printf("Here is your answer:")
                                 console.greenf(sessionDescriptionToJSON(pc.localDescription!!))
-                                (this as ServerlessRTCClient).p2pState = P2pState.WAITING_TO_CONNECT
+                                (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_TO_CONNECT
                             }
                         }
 
@@ -115,13 +132,13 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                                         val state = dataChannel.readyState
                                         console.d("Channel state changed:$state")
                                         if (state == RTCDataChannelState.RTCDataChannelStateOpen) {
-                                            (this as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
+                                            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
                                             console.bluef("Chat established.")
                                             val remoteAddress =
                                                 pc.remoteDescription?.sdp ?: "unknown"
                                             console.printf("Connected to remote peer: $remoteAddress")
                                         } else if (state == RTCDataChannelState.RTCDataChannelStateClosed) {
-                                            (this as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
+                                            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
                                             console.redf("Chat ended.")
                                         }
                                     }
@@ -178,24 +195,24 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                     if (error == null) {
                         pc.answerForConstraints(constraints) { answer, err ->
                             if (answer != null) {
-                                pc.setLocalDescription(answer) {}
+                                pc.setLocalDescription(answer, DefaultCompletionHandler(console))
                             }
                         }
                     }
                 }
             } else {
                 console.redf("Invalid or unsupported offer.")
-                (this as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_OFFER
+                (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_OFFER
             }
         } catch (e: Exception) {
-            console.redf("bad json")
-            (this as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_OFFER
+            console.redf("bad json: ${e.message}")
+            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_OFFER
         }
     }
 
     override fun processAnswer(sdpJSON: String) {
         try {
-            val nsData: NSData = NSString.create(sdpJSON)!!.dataUsingEncoding(NSUTF8StringEncoding)!!
+            val nsData: NSData = NSString.create(sdpJSON).dataUsingEncoding(NSUTF8StringEncoding)!!
             val obj: Map<*, *> = NSJSONSerialization.JSONObjectWithData(
                 data = nsData,
                 options = NSJSONWritingPrettyPrinted,
@@ -203,22 +220,22 @@ class IOSClientWebRTC : ServerlessRTCClient() {
             ) as Map<*, *>
             val type = obj[JSON_TYPE] as? String
             val sdp = obj[JSON_SDP] as? String
-            (this as ServerlessRTCClient).p2pState = P2pState.WAITING_TO_CONNECT
+            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_TO_CONNECT
             if (type == "answer" && sdp != null) {
                 val answer = RTCSessionDescription(type = RTCSdpType.RTCSdpTypeAnswer, sdp = sdp)
-                pc.setRemoteDescription(answer) {}
+                pc.setRemoteDescription(answer, DefaultCompletionHandler(console))
             } else {
                 console.redf("Invalid or unsupported answer.")
-                (this as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_ANSWER
+                (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_ANSWER
             }
         } catch (e: Exception) {
-            console.redf("bad json")
-            (this as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_ANSWER
+            console.redf("bad json: ${e.message}")
+            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_ANSWER
         }
     }
 
     override fun makeOffer() {
-        (this as ServerlessRTCClient).p2pState = P2pState.CREATING_OFFER
+        (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CREATING_OFFER
         pcInitialized = true
         val config = RTCConfiguration()
         config.iceServers = iceServers
@@ -234,7 +251,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                     if (didChangeIceGatheringState == RTCIceGatheringState.RTCIceGatheringStateComplete) {
                         console.printf("Your offer is:")
                         console.greenf(sessionDescriptionToJSON(pc.localDescription!!))
-                        (this as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_ANSWER
+                        (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_ANSWER
                     }
                 }
 
@@ -274,12 +291,12 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                             val state = dataChannel.readyState
                             console.d("Channel state changed:$state")
                             if (state == RTCDataChannelState.RTCDataChannelStateOpen) {
-                                (this as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
+                                (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
                                 console.bluef("Chat established.")
                                 val remoteAddress = pc.remoteDescription?.sdp ?: "unknown"
                                 console.printf("Connected to remote peer: $remoteAddress")
                             } else if (state == RTCDataChannelState.RTCDataChannelStateClosed) {
-                                (this as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
+                                (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
                                 console.redf("Chat ended.")
                             }
                         }
@@ -334,7 +351,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
         makeDataChannel()
         pc.offerForConstraints(constraints) { offer, error ->
             if (offer != null) {
-                pc.setLocalDescription(offer) {}
+                pc.setLocalDescription(offer, DefaultCompletionHandler(console))
             }
         }
     }
@@ -344,7 +361,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
         if (ch != null && p2pState == P2pState.CHAT_ESTABLISHED) {
             val text = "{\"$JSON_MESSAGE\":\"$message\"}"
             val nSString = NSString.create(text)
-            val nsData = nSString!!.dataUsingEncoding(NSUTF8StringEncoding)!!
+            val nsData = nSString.dataUsingEncoding(NSUTF8StringEncoding)!!
             val buffer = RTCDataBuffer(data = nsData, isBinary = false)
             ch.sendData(buffer)
         } else {
@@ -378,12 +395,12 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                 val state = dataChannel.readyState
                 console.d("Channel state changed:$state")
                 if (state == RTCDataChannelState.RTCDataChannelStateOpen) {
-                    (this as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
+                    (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
                     console.bluef("Chat established.")
                     val remoteAddress = pc.remoteDescription?.sdp ?: "unknown"
                     console.printf("Connected to remote peer: $remoteAddress")
                 } else if (state == RTCDataChannelState.RTCDataChannelStateClosed) {
-                    (this as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
+                    (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
                     console.redf("Chat ended.")
                 }
             }
