@@ -3,7 +3,9 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import kotlin.collections.set
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -11,6 +13,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinCocoapods)
 }
 
 kotlin {
@@ -29,7 +32,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
-            binaryOption("bundleId", "com.softartdev.ktlan")
+            binaryOption("bundleId", "com.softartdev.ktlan.compose.app")
         }
     }
     
@@ -82,7 +85,9 @@ kotlin {
             implementation(libs.kscan)
             implementation(libs.camera.compose.permission)
         }
-//        commonTest.dependencies { implementation(libs.kotlin.test) } // FIXME revert composeApp/src/commonTest
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
             implementation(compose.preview)
@@ -98,6 +103,21 @@ kotlin {
             implementation(compose.desktop.uiTestJUnit4)
             implementation(libs.androidx.lifecycle.runtime.testing)
         }
+    }
+    cocoapods {
+        name = "ComposeAppCocoaPod"
+        version = "1.0"
+        summary = "Compose app for the Kotlin/Native module"
+        homepage = "https://github.com/softartdev/ktLAN"
+        framework {
+            baseName = "ComposeAppFramework"
+            binaryOption("bundleId", "com.softartdev.ktlan.compose.app.framework")
+        }
+        xcodeConfigurationToNativeBuildType["CUSTOM_DEBUG"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] = NativeBuildType.RELEASE
+        ios.deploymentTarget = "13.0"
+        pod("WebRTC-SDK", version = "125.6422.07", moduleName = "WebRTC", linkOnly = true)
+        podfile = project.file("../iosApp/Podfile")
     }
 }
 
