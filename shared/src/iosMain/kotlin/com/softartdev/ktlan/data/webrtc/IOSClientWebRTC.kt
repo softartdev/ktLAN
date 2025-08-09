@@ -43,11 +43,12 @@ class IOSClientWebRTC : ServerlessRTCClient() {
     private val iceServers: List<RTCIceServer> = listOf(
         RTCIceServer(listOf("stun:stun.l.google.com:19302"))
     )
-
     private val constraints = RTCMediaConstraints(
         mandatoryConstraints = null,
         optionalConstraints = mapOf("DtlsSrtpKeyAgreement" to "true")
     )
+    private var pcDelegate: RTCPeerConnectionDelegateProtocol? = null
+    private var dcDelegate: RTCDataChannelDelegateProtocol? = null
 
     private fun sessionDescriptionToJSON(sessDesc: RTCSessionDescription): String {
         val typeString = when (sessDesc.type) {
@@ -79,116 +80,117 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                 pcInitialized = true
                 val config = RTCConfiguration()
                 config.iceServers = iceServers
+                pcDelegate = object : NSObject(), RTCPeerConnectionDelegateProtocol {
+
+                    override fun peerConnection(
+                        peerConnection: RTCPeerConnection,
+                        didChangeIceGatheringState: RTCIceGatheringState
+                    ) {
+                        if (didChangeIceGatheringState == RTCIceGatheringState.RTCIceGatheringStateComplete) {
+                            console.printf("Here is your answer:")
+                            console.greenf(sessionDescriptionToJSON(pc.localDescription!!))
+                            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_TO_CONNECT
+                        }
+                    }
+
+                    @ObjCSignatureOverride
+                    override fun peerConnection(
+                        peerConnection: RTCPeerConnection,
+                        didRemoveStream: RTCMediaStream
+                    ) {
+                        console.d("Stream removed")
+                    }
+
+                    override fun peerConnection(
+                        peerConnection: RTCPeerConnection,
+                        didOpenDataChannel: RTCDataChannel
+                    ) {
+                        channel = didOpenDataChannel
+                        dcDelegate = object : NSObject(), RTCDataChannelDelegateProtocol {
+                            override fun dataChannel(
+                                dataChannel: RTCDataChannel,
+                                didReceiveMessageWithBuffer: RTCDataBuffer
+                            ) {
+                                val nsData: NSData = didReceiveMessageWithBuffer.data
+                                val obj = NSJSONSerialization.JSONObjectWithData(
+                                    data = nsData,
+                                    options = NSJSONWritingPrettyPrinted,
+                                    error = null
+                                ) as Map<*, *>
+                                val message = obj[JSON_MESSAGE] as? String
+                                if (message != null) {
+                                    console.bluef(">$message")
+                                } else {
+                                    console.redf("Malformed message received")
+                                }
+                            }
+
+                            override fun dataChannelDidChangeState(dataChannel: RTCDataChannel) {
+                                val state = dataChannel.readyState
+                                console.d("Channel state changed:$state")
+                                if (state == RTCDataChannelState.RTCDataChannelStateOpen) {
+                                    (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
+                                    console.bluef("Chat established.")
+                                    val remoteAddress =
+                                        pc.remoteDescription?.sdp ?: "unknown"
+                                    console.printf("Connected to remote peer: $remoteAddress")
+                                } else if (state == RTCDataChannelState.RTCDataChannelStateClosed) {
+                                    (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
+                                    console.redf("Chat ended.")
+                                }
+                            }
+                        }
+                        channel?.delegate = dcDelegate
+                    }
+
+                    override fun peerConnection(
+                        peerConnection: RTCPeerConnection,
+                        didRemoveIceCandidates: List<*>
+                    ) {
+                        for (candidate in didRemoveIceCandidates) {
+                            if (candidate is RTCIceCandidate) {
+                                console.d("ice candidate removed: {${candidate.sdp}}")
+                            }
+                        }
+                    }
+
+                    override fun peerConnection(
+                        peerConnection: RTCPeerConnection,
+                        didChangeIceConnectionState: RTCIceConnectionState
+                    ) {
+                        console.d("ICE connection state changed: ${didChangeIceConnectionState.name}")
+                    }
+
+                    override fun peerConnection(
+                        peerConnection: RTCPeerConnection,
+                        didGenerateIceCandidate: RTCIceCandidate
+                    ) {
+                        console.d("ice candidate: {${didGenerateIceCandidate.sdp}}")
+                    }
+
+                    override fun peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection) {
+                        console.d("Peer connection should negotiate")
+                    }
+
+                    @ObjCSignatureOverride
+                    override fun peerConnection(
+                        peerConnection: RTCPeerConnection,
+                        didAddStream: RTCMediaStream
+                    ) {
+                        console.d("Stream added")
+                    }
+
+                    override fun peerConnection(
+                        peerConnection: RTCPeerConnection,
+                        didChangeSignalingState: RTCSignalingState
+                    ) {
+                        console.d("Signaling state changed: ${didChangeSignalingState.name}")
+                    }
+                }
                 pc = factory.peerConnectionWithConfiguration(
                     configuration = config,
                     constraints = constraints,
-                    delegate = object : NSObject(), RTCPeerConnectionDelegateProtocol {
-
-                        override fun peerConnection(
-                            peerConnection: RTCPeerConnection,
-                            didChangeIceGatheringState: RTCIceGatheringState
-                        ) {
-                            if (didChangeIceGatheringState == RTCIceGatheringState.RTCIceGatheringStateComplete) {
-                                console.printf("Here is your answer:")
-                                console.greenf(sessionDescriptionToJSON(pc.localDescription!!))
-                                (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_TO_CONNECT
-                            }
-                        }
-
-                        @ObjCSignatureOverride
-                        override fun peerConnection(
-                            peerConnection: RTCPeerConnection,
-                            didRemoveStream: RTCMediaStream
-                        ) {
-                            console.d("Stream removed")
-                        }
-
-                        override fun peerConnection(
-                            peerConnection: RTCPeerConnection,
-                            didOpenDataChannel: RTCDataChannel
-                        ) {
-                            channel = didOpenDataChannel
-                            channel?.delegate =
-                                object : NSObject(), RTCDataChannelDelegateProtocol {
-                                    override fun dataChannel(
-                                        dataChannel: RTCDataChannel,
-                                        didReceiveMessageWithBuffer: RTCDataBuffer
-                                    ) {
-                                        val nsData: NSData = didReceiveMessageWithBuffer.data
-                                        val obj = NSJSONSerialization.JSONObjectWithData(
-                                            data = nsData,
-                                            options = NSJSONWritingPrettyPrinted,
-                                            error = null
-                                        ) as Map<*, *>
-                                        val message = obj[JSON_MESSAGE] as? String
-                                        if (message != null) {
-                                            console.bluef(">$message")
-                                        } else {
-                                            console.redf("Malformed message received")
-                                        }
-                                    }
-
-                                    override fun dataChannelDidChangeState(dataChannel: RTCDataChannel) {
-                                        val state = dataChannel.readyState
-                                        console.d("Channel state changed:$state")
-                                        if (state == RTCDataChannelState.RTCDataChannelStateOpen) {
-                                            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
-                                            console.bluef("Chat established.")
-                                            val remoteAddress =
-                                                pc.remoteDescription?.sdp ?: "unknown"
-                                            console.printf("Connected to remote peer: $remoteAddress")
-                                        } else if (state == RTCDataChannelState.RTCDataChannelStateClosed) {
-                                            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
-                                            console.redf("Chat ended.")
-                                        }
-                                    }
-                                }
-                        }
-
-                        override fun peerConnection(
-                            peerConnection: RTCPeerConnection,
-                            didRemoveIceCandidates: List<*>
-                        ) {
-                            for (candidate in didRemoveIceCandidates) {
-                                if (candidate is RTCIceCandidate) {
-                                    console.d("ice candidate removed: {${candidate.sdp}}")
-                                }
-                            }
-                        }
-
-                        override fun peerConnection(
-                            peerConnection: RTCPeerConnection,
-                            didChangeIceConnectionState: RTCIceConnectionState
-                        ) {
-                            console.d("ICE connection state changed: ${didChangeIceConnectionState.name}")
-                        }
-
-                        override fun peerConnection(
-                            peerConnection: RTCPeerConnection,
-                            didGenerateIceCandidate: RTCIceCandidate
-                        ) {
-                            console.d("ice candidate: {${didGenerateIceCandidate.sdp}}")
-                        }
-
-                        override fun peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection) {
-                            console.d("Peer connection should negotiate")
-                        }
-
-                        @ObjCSignatureOverride
-                        override fun peerConnection(
-                            peerConnection: RTCPeerConnection,
-                            didAddStream: RTCMediaStream
-                        ) {
-                            console.d("Stream added")
-                        }
-
-                        override fun peerConnection(
-                            peerConnection: RTCPeerConnection,
-                            didChangeSignalingState: RTCSignalingState
-                        ) {
-                            console.d("Signaling state changed: ${didChangeSignalingState.name}")
-                        }
-                    })!!
+                    delegate = pcDelegate)!!
 
                 val offer = RTCSessionDescription(type = RTCSdpType.RTCSdpTypeOffer, sdp = sdp)
                 pc.setRemoteDescription(offer) { error ->
@@ -239,115 +241,117 @@ class IOSClientWebRTC : ServerlessRTCClient() {
         pcInitialized = true
         val config = RTCConfiguration()
         config.iceServers = iceServers
+        pcDelegate = object : NSObject(), RTCPeerConnectionDelegateProtocol {
+
+            override fun peerConnection(
+                peerConnection: RTCPeerConnection,
+                didChangeIceGatheringState: RTCIceGatheringState
+            ) {
+                if (didChangeIceGatheringState == RTCIceGatheringState.RTCIceGatheringStateComplete) {
+                    console.printf("Your offer is:")
+                    console.greenf(sessionDescriptionToJSON(pc.localDescription!!))
+                    (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_ANSWER
+                }
+            }
+
+            @ObjCSignatureOverride
+            override fun peerConnection(
+                peerConnection: RTCPeerConnection,
+                didRemoveStream: RTCMediaStream
+            ) {
+                console.d("Stream removed")
+            }
+
+            override fun peerConnection(
+                peerConnection: RTCPeerConnection,
+                didOpenDataChannel: RTCDataChannel
+            ) {
+                channel = didOpenDataChannel
+                dcDelegate = object : NSObject(), RTCDataChannelDelegateProtocol {
+                    override fun dataChannel(
+                        dataChannel: RTCDataChannel,
+                        didReceiveMessageWithBuffer: RTCDataBuffer
+                    ) {
+                        val nsData = didReceiveMessageWithBuffer.data
+                        val obj = NSJSONSerialization.JSONObjectWithData(
+                            data = nsData,
+                            options = NSJSONWritingPrettyPrinted,
+                            error = null
+                        ) as Map<*, *>
+                        val message = obj[JSON_MESSAGE] as? String
+                        if (message != null) {
+                            console.bluef(">$message")
+                        } else {
+                            console.redf("Malformed message received")
+                        }
+                    }
+
+                    override fun dataChannelDidChangeState(dataChannel: RTCDataChannel) {
+                        val state = dataChannel.readyState
+                        console.d("Channel state changed:$state")
+                        if (state == RTCDataChannelState.RTCDataChannelStateOpen) {
+                            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
+                            console.bluef("Chat established.")
+                            val remoteAddress = pc.remoteDescription?.sdp ?: "unknown"
+                            console.printf("Connected to remote peer: $remoteAddress")
+                        } else if (state == RTCDataChannelState.RTCDataChannelStateClosed) {
+                            (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
+                            console.redf("Chat ended.")
+                        }
+                    }
+                }
+                channel?.delegate = dcDelegate
+            }
+
+            override fun peerConnection(
+                peerConnection: RTCPeerConnection,
+                didRemoveIceCandidates: List<*>
+            ) {
+                for (candidate in didRemoveIceCandidates) {
+                    if (candidate is RTCIceCandidate) {
+                        console.d("ice candidate removed: {${candidate.sdp}}")
+                    }
+                }
+            }
+
+            override fun peerConnection(
+                peerConnection: RTCPeerConnection,
+                didChangeIceConnectionState: RTCIceConnectionState
+            ) {
+                console.d("ICE connection state changed: ${didChangeIceConnectionState.name}")
+            }
+
+            override fun peerConnection(
+                peerConnection: RTCPeerConnection,
+                didGenerateIceCandidate: RTCIceCandidate
+            ) {
+                console.d("ice candidate: {${didGenerateIceCandidate.sdp}}")
+            }
+
+            override fun peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection) {
+                console.d("Peer connection should negotiate")
+            }
+
+            @ObjCSignatureOverride
+            override fun peerConnection(
+                peerConnection: RTCPeerConnection,
+                didAddStream: RTCMediaStream
+            ) {
+                console.d("Stream added")
+            }
+
+            override fun peerConnection(
+                peerConnection: RTCPeerConnection,
+                didChangeSignalingState: RTCSignalingState
+            ) {
+                console.d("Signaling state changed: ${didChangeSignalingState.name}")
+            }
+
+        }
         pc = factory.peerConnectionWithConfiguration(
             configuration = config,
             constraints = constraints,
-            delegate = object : NSObject(), RTCPeerConnectionDelegateProtocol {
-
-                override fun peerConnection(
-                    peerConnection: RTCPeerConnection,
-                    didChangeIceGatheringState: RTCIceGatheringState
-                ) {
-                    if (didChangeIceGatheringState == RTCIceGatheringState.RTCIceGatheringStateComplete) {
-                        console.printf("Your offer is:")
-                        console.greenf(sessionDescriptionToJSON(pc.localDescription!!))
-                        (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.WAITING_FOR_ANSWER
-                    }
-                }
-
-                @ObjCSignatureOverride
-                override fun peerConnection(
-                    peerConnection: RTCPeerConnection,
-                    didRemoveStream: RTCMediaStream
-                ) {
-                    console.d("Stream removed")
-                }
-
-                override fun peerConnection(
-                    peerConnection: RTCPeerConnection,
-                    didOpenDataChannel: RTCDataChannel
-                ) {
-                    channel = didOpenDataChannel
-                    channel?.delegate = object : NSObject(), RTCDataChannelDelegateProtocol {
-                        override fun dataChannel(
-                            dataChannel: RTCDataChannel,
-                            didReceiveMessageWithBuffer: RTCDataBuffer
-                        ) {
-                            val nsData = didReceiveMessageWithBuffer.data
-                            val obj = NSJSONSerialization.JSONObjectWithData(
-                                data = nsData,
-                                options = NSJSONWritingPrettyPrinted,
-                                error = null
-                            ) as Map<*, *>
-                            val message = obj[JSON_MESSAGE] as? String
-                            if (message != null) {
-                                console.bluef(">$message")
-                            } else {
-                                console.redf("Malformed message received")
-                            }
-                        }
-
-                        override fun dataChannelDidChangeState(dataChannel: RTCDataChannel) {
-                            val state = dataChannel.readyState
-                            console.d("Channel state changed:$state")
-                            if (state == RTCDataChannelState.RTCDataChannelStateOpen) {
-                                (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ESTABLISHED
-                                console.bluef("Chat established.")
-                                val remoteAddress = pc.remoteDescription?.sdp ?: "unknown"
-                                console.printf("Connected to remote peer: $remoteAddress")
-                            } else if (state == RTCDataChannelState.RTCDataChannelStateClosed) {
-                                (this@IOSClientWebRTC as ServerlessRTCClient).p2pState = P2pState.CHAT_ENDED
-                                console.redf("Chat ended.")
-                            }
-                        }
-                    }
-                }
-
-                override fun peerConnection(
-                    peerConnection: RTCPeerConnection,
-                    didRemoveIceCandidates: List<*>
-                ) {
-                    for (candidate in didRemoveIceCandidates) {
-                        if (candidate is RTCIceCandidate) {
-                            console.d("ice candidate removed: {${candidate.sdp}}")
-                        }
-                    }
-                }
-
-                override fun peerConnection(
-                    peerConnection: RTCPeerConnection,
-                    didChangeIceConnectionState: RTCIceConnectionState
-                ) {
-                    console.d("ICE connection state changed: ${didChangeIceConnectionState.name}")
-                }
-
-                override fun peerConnection(
-                    peerConnection: RTCPeerConnection,
-                    didGenerateIceCandidate: RTCIceCandidate
-                ) {
-                    console.d("ice candidate: {${didGenerateIceCandidate.sdp}}")
-                }
-
-                override fun peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection) {
-                    console.d("Peer connection should negotiate")
-                }
-
-                @ObjCSignatureOverride
-                override fun peerConnection(
-                    peerConnection: RTCPeerConnection,
-                    didAddStream: RTCMediaStream
-                ) {
-                    console.d("Stream added")
-                }
-
-                override fun peerConnection(
-                    peerConnection: RTCPeerConnection,
-                    didChangeSignalingState: RTCSignalingState
-                ) {
-                    console.d("Signaling state changed: ${didChangeSignalingState.name}")
-                }
-
-            })!!
+            delegate = pcDelegate)!!
         makeDataChannel()
         pc.offerForConstraints(constraints) { offer, error ->
             if (offer != null) {
@@ -372,7 +376,7 @@ class IOSClientWebRTC : ServerlessRTCClient() {
     override fun makeDataChannel() {
         val init = RTCDataChannelConfiguration()
         channel = pc.dataChannelForLabel("test", init)
-        channel?.delegate = object : NSObject(), RTCDataChannelDelegateProtocol {
+        dcDelegate = object : NSObject(), RTCDataChannelDelegateProtocol {
             override fun dataChannel(
                 dataChannel: RTCDataChannel,
                 didReceiveMessageWithBuffer: RTCDataBuffer
@@ -405,9 +409,14 @@ class IOSClientWebRTC : ServerlessRTCClient() {
                 }
             }
         }
+        channel?.delegate = dcDelegate
     }
 
     override fun destroy() {
+        channel?.delegate = null
+        dcDelegate = null
+        pcDelegate = null
+
         channel?.close()
         if (pcInitialized) {
             pc.close()
