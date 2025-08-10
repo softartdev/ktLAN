@@ -77,6 +77,11 @@ kotlin {
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch32") })
             implementation(libs.json)
         }
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(npm("webrtc-adapter", "9.0.1"))
+        }
     }
     cocoapods {
         name = "SharedCocoaPod"
