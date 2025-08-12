@@ -1,0 +1,722 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		0114D78AA29C45BB52A782B0ED8994CC /* WebRTC-SDK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = CCAC9AD0EF08CB82D9A52E94C7A10474 /* Build configuration list for PBXAggregateTarget "WebRTC-SDK" */;
+			buildPhases = (
+				6349FA65C1183982F5FFF4D4A9CD7C54 /* [CP] Copy XCFrameworks */,
+			);
+			dependencies = (
+			);
+			name = "WebRTC-SDK";
+		};
+		E8627E3F26D37F72025D24B4564DA86F /* ComposeAppCocoaPod */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7E35147DAB5BB22B6DF5EFFA080F9328 /* Build configuration list for PBXAggregateTarget "ComposeAppCocoaPod" */;
+			buildPhases = (
+				3D545282AA2E9A1A6A5FED557F133768 /* [CP-User] Build ComposeAppCocoaPod */,
+				8C6BDA6EB69EC103E27B3A4D3F9D5AF2 /* [CP] Copy dSYMs */,
+			);
+			dependencies = (
+				FFC6B4213CBE0C12E91B6B1D536788FF /* PBXTargetDependency */,
+			);
+			name = ComposeAppCocoaPod;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		5DC0EEDE666A5E3FB3B5D13601A26949 /* Pods-iosApp-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DB2A5F5DADA1DDE45F36B1A2D6AC16 /* Pods-iosApp-dummy.m */; };
+		A5FDD9A1530E174967CC02BC4AE5DCFF /* Pods-iosApp-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 015E0D7EA7331961AB63E5AFECA86BB5 /* Pods-iosApp-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F2222C8DF5E6BC2B57F53A2AE89D2E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		65DA902B6DA32A7615003B177C335155 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0114D78AA29C45BB52A782B0ED8994CC;
+			remoteInfo = "WebRTC-SDK";
+		};
+		C228D0D186D96A512039EC7BBDB504C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E8627E3F26D37F72025D24B4564DA86F;
+			remoteInfo = ComposeAppCocoaPod;
+		};
+		CCA1BAED4A9C268DA11811BF41D52EDB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0114D78AA29C45BB52A782B0ED8994CC;
+			remoteInfo = "WebRTC-SDK";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00D5A4BCCC6826C8F7953CCD60325412 /* WebRTC-SDK-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "WebRTC-SDK-xcframeworks.sh"; sourceTree = "<group>"; };
+		015E0D7EA7331961AB63E5AFECA86BB5 /* Pods-iosApp-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-iosApp-umbrella.h"; sourceTree = "<group>"; };
+		11C9B998CE0869936AE6BE69270DAAC9 /* Pods-iosApp.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-iosApp.modulemap"; sourceTree = "<group>"; };
+		160575C16A50D0BE702911C7850C6996 /* ComposeAppCocoaPod-copy-dsyms.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "ComposeAppCocoaPod-copy-dsyms.sh"; sourceTree = "<group>"; };
+		1728CF9533D36362B4CC8858BB72DF8D /* ComposeAppCocoaPod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = ComposeAppCocoaPod.debug.xcconfig; sourceTree = "<group>"; };
+		244FC2DAA936A0B07ACEFDC74E2D54B8 /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
+		384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		4AB2AB9B52F1FA1E461F6833504711A3 /* WebRTC-SDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "WebRTC-SDK.release.xcconfig"; sourceTree = "<group>"; };
+		55ABB06C8A1800962A74E007E7733796 /* Pods-iosApp-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-iosApp-frameworks.sh"; sourceTree = "<group>"; };
+		56A74C23D6155333A66C5D6AB5D76863 /* ComposeAppCocoaPod.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = ComposeAppCocoaPod.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		6F3B5FED07117E377CFAC3D49B490F17 /* Pods-iosApp-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-iosApp-resources.sh"; sourceTree = "<group>"; };
+		7551F9BAD34180100A7DA602AC6E8CD6 /* ComposeAppCocoaPod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = ComposeAppCocoaPod.release.xcconfig; sourceTree = "<group>"; };
+		76A263267985B0185D85E24D40FCEE9A /* Pods-iosApp-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-iosApp-Info.plist"; sourceTree = "<group>"; };
+		76D28488EA8CF5C697DFF07967A9960E /* Pods-iosApp-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-iosApp-acknowledgements.plist"; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		B097DD7534E741D5C41838011D755842 /* Pods-iosApp */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-iosApp"; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDEFD7CFC20FA55619B809C1A09A9AF7 /* WebRTC-SDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "WebRTC-SDK.debug.xcconfig"; sourceTree = "<group>"; };
+		E462E23B3674BF94EAB1504D506F2803 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
+		E4C923318724794E3CC670804C2D6A6B /* Pods-iosApp-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-iosApp-acknowledgements.markdown"; sourceTree = "<group>"; };
+		E6DB2A5F5DADA1DDE45F36B1A2D6AC16 /* Pods-iosApp-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-iosApp-dummy.m"; sourceTree = "<group>"; };
+		EC6BDB39DC5CE1E9758896B5D77E6EA8 /* compose-resources */ = {isa = PBXFileReference; includeInIndex = 1; name = "compose-resources"; path = "build/compose/cocoapods/compose-resources"; sourceTree = "<group>"; };
+		F613FA60FD74013114AF1A17E8073D99 /* WebRTC.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; path = WebRTC.xcframework; sourceTree = "<group>"; };
+		FCB416246AB2C64AB23C0A2E6B9DC57A /* ComposeAppFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ComposeAppFramework.framework; path = build/cocoapods/framework/ComposeAppFramework.framework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A2A282B79839FD187CCA6C15AB577C6B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F2222C8DF5E6BC2B57F53A2AE89D2E8B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		138B87E878A488608D753587F16A365F /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				00D5A4BCCC6826C8F7953CCD60325412 /* WebRTC-SDK-xcframeworks.sh */,
+				BDEFD7CFC20FA55619B809C1A09A9AF7 /* WebRTC-SDK.debug.xcconfig */,
+				4AB2AB9B52F1FA1E461F6833504711A3 /* WebRTC-SDK.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/WebRTC-SDK";
+			sourceTree = "<group>";
+		};
+		1F86AA6785DF34AFD5A71790761717DE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B097DD7534E741D5C41838011D755842 /* Pods-iosApp */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		230B23D5FDB104946F10A561A929D69E /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				56A74C23D6155333A66C5D6AB5D76863 /* ComposeAppCocoaPod.podspec */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		43735E02E25963F40BAD1D21CBD4CF4F /* WebRTC-SDK */ = {
+			isa = PBXGroup;
+			children = (
+				AED962EC6BF17430008D4CE808CB7994 /* Frameworks */,
+				138B87E878A488608D753587F16A365F /* Support Files */,
+			);
+			name = "WebRTC-SDK";
+			path = "WebRTC-SDK";
+			sourceTree = "<group>";
+		};
+		75A399DC5A0E106A232E05B72C561E5F /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				160575C16A50D0BE702911C7850C6996 /* ComposeAppCocoaPod-copy-dsyms.sh */,
+				1728CF9533D36362B4CC8858BB72DF8D /* ComposeAppCocoaPod.debug.xcconfig */,
+				7551F9BAD34180100A7DA602AC6E8CD6 /* ComposeAppCocoaPod.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../iosApp/Pods/Target Support Files/ComposeAppCocoaPod";
+			sourceTree = "<group>";
+		};
+		7CD87D68922F0442B34A2A8C16912209 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FCB416246AB2C64AB23C0A2E6B9DC57A /* ComposeAppFramework.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		993B28196491D4B6E9A33A0D6D0E4CDF /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				FC52BDB233D681088668BA5B7BF9D12A /* ComposeAppCocoaPod */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		A3A8D93225807B6184AD75E6AFE75099 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				43735E02E25963F40BAD1D21CBD4CF4F /* WebRTC-SDK */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		AED962EC6BF17430008D4CE808CB7994 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F613FA60FD74013114AF1A17E8073D99 /* WebRTC.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BA6B7BC2729F657E9D3682E55CA6E980 /* Pods-iosApp */ = {
+			isa = PBXGroup;
+			children = (
+				11C9B998CE0869936AE6BE69270DAAC9 /* Pods-iosApp.modulemap */,
+				E4C923318724794E3CC670804C2D6A6B /* Pods-iosApp-acknowledgements.markdown */,
+				76D28488EA8CF5C697DFF07967A9960E /* Pods-iosApp-acknowledgements.plist */,
+				E6DB2A5F5DADA1DDE45F36B1A2D6AC16 /* Pods-iosApp-dummy.m */,
+				55ABB06C8A1800962A74E007E7733796 /* Pods-iosApp-frameworks.sh */,
+				76A263267985B0185D85E24D40FCEE9A /* Pods-iosApp-Info.plist */,
+				6F3B5FED07117E377CFAC3D49B490F17 /* Pods-iosApp-resources.sh */,
+				015E0D7EA7331961AB63E5AFECA86BB5 /* Pods-iosApp-umbrella.h */,
+				E462E23B3674BF94EAB1504D506F2803 /* Pods-iosApp.debug.xcconfig */,
+				244FC2DAA936A0B07ACEFDC74E2D54B8 /* Pods-iosApp.release.xcconfig */,
+			);
+			name = "Pods-iosApp";
+			path = "Target Support Files/Pods-iosApp";
+			sourceTree = "<group>";
+		};
+		CF1408CF629C7361332E53B88F7BD30C = {
+			isa = PBXGroup;
+			children = (
+				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
+				993B28196491D4B6E9A33A0D6D0E4CDF /* Development Pods */,
+				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
+				A3A8D93225807B6184AD75E6AFE75099 /* Pods */,
+				1F86AA6785DF34AFD5A71790761717DE /* Products */,
+				D456857FB6E5BC3266BEC21401D60DB5 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E4801F62A6B08CD9B5410329F1A18FDE /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D456857FB6E5BC3266BEC21401D60DB5 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				BA6B7BC2729F657E9D3682E55CA6E980 /* Pods-iosApp */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		E4801F62A6B08CD9B5410329F1A18FDE /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		FC52BDB233D681088668BA5B7BF9D12A /* ComposeAppCocoaPod */ = {
+			isa = PBXGroup;
+			children = (
+				EC6BDB39DC5CE1E9758896B5D77E6EA8 /* compose-resources */,
+				7CD87D68922F0442B34A2A8C16912209 /* Frameworks */,
+				230B23D5FDB104946F10A561A929D69E /* Pod */,
+				75A399DC5A0E106A232E05B72C561E5F /* Support Files */,
+			);
+			name = ComposeAppCocoaPod;
+			path = ../../composeApp;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8F15B4C66BF60B968DCA70D7AF9864A0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5FDD9A1530E174967CC02BC4AE5DCFF /* Pods-iosApp-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		ED39C638569286489CD697A6C8964146 /* Pods-iosApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 23A6EB5F9A455DC5BE4A0F5A90086873 /* Build configuration list for PBXNativeTarget "Pods-iosApp" */;
+			buildPhases = (
+				8F15B4C66BF60B968DCA70D7AF9864A0 /* Headers */,
+				986477D50B349D9A3151221681BA5037 /* Sources */,
+				A2A282B79839FD187CCA6C15AB577C6B /* Frameworks */,
+				80123BD363E79510675BBDAF663B5C98 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0F67D5EB65FD09EDEE2C8C6730D142E6 /* PBXTargetDependency */,
+				878C502E2E53374731E6CCFA885746E8 /* PBXTargetDependency */,
+			);
+			name = "Pods-iosApp";
+			productName = Pods_iosApp;
+			productReference = B097DD7534E741D5C41838011D755842 /* Pods-iosApp */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1F86AA6785DF34AFD5A71790761717DE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E8627E3F26D37F72025D24B4564DA86F /* ComposeAppCocoaPod */,
+				ED39C638569286489CD697A6C8964146 /* Pods-iosApp */,
+				0114D78AA29C45BB52A782B0ED8994CC /* WebRTC-SDK */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		80123BD363E79510675BBDAF663B5C98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3D545282AA2E9A1A6A5FED557F133768 /* [CP-User] Build ComposeAppCocoaPod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "[CP-User] Build ComposeAppCocoaPod";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "                if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n                  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\"\"\n                  exit 0\n                fi\n                set -ev\n                REPO_ROOT=\"$PODS_TARGET_SRCROOT\"\n                \"$REPO_ROOT/../gradlew\" -p \"$REPO_ROOT\" $KOTLIN_PROJECT_PATH:syncFramework                     -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME                     -Pkotlin.native.cocoapods.archs=\"$ARCHS\"                     -Pkotlin.native.cocoapods.configuration=\"$CONFIGURATION\"\n";
+		};
+		6349FA65C1183982F5FFF4D4A9CD7C54 /* [CP] Copy XCFrameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			name = "[CP] Copy XCFrameworks";
+			outputFileListPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/WebRTC-SDK/WebRTC-SDK-xcframeworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8C6BDA6EB69EC103E27B3A4D3F9D5AF2 /* [CP] Copy dSYMs */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			name = "[CP] Copy dSYMs";
+			outputFileListPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/ComposeAppCocoaPod/ComposeAppCocoaPod-copy-dsyms.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		986477D50B349D9A3151221681BA5037 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5DC0EEDE666A5E3FB3B5D13601A26949 /* Pods-iosApp-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0F67D5EB65FD09EDEE2C8C6730D142E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ComposeAppCocoaPod;
+			target = E8627E3F26D37F72025D24B4564DA86F /* ComposeAppCocoaPod */;
+			targetProxy = C228D0D186D96A512039EC7BBDB504C1 /* PBXContainerItemProxy */;
+		};
+		878C502E2E53374731E6CCFA885746E8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "WebRTC-SDK";
+			target = 0114D78AA29C45BB52A782B0ED8994CC /* WebRTC-SDK */;
+			targetProxy = 65DA902B6DA32A7615003B177C335155 /* PBXContainerItemProxy */;
+		};
+		FFC6B4213CBE0C12E91B6B1D536788FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "WebRTC-SDK";
+			target = 0114D78AA29C45BB52A782B0ED8994CC /* WebRTC-SDK */;
+			targetProxy = CCA1BAED4A9C268DA11811BF41D52EDB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1C93197D9EC1F0672718721A72F11BEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E462E23B3674BF94EAB1504D506F2803 /* Pods-iosApp.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-iosApp/Pods-iosApp-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-iosApp/Pods-iosApp.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		268E73CC6D2A3E3D86FD48EA47F70939 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 244FC2DAA936A0B07ACEFDC74E2D54B8 /* Pods-iosApp.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-iosApp/Pods-iosApp-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-iosApp/Pods-iosApp.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		30836118024DBC1C178D8737A1672E06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BDEFD7CFC20FA55619B809C1A09A9AF7 /* WebRTC-SDK.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6B2872EA82188C027F33C37FBD563F01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7551F9BAD34180100A7DA602AC6E8CD6 /* ComposeAppCocoaPod.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8DE5143C03248BB6CD542DE3963D6F3A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		9E406C6AAF85E580207CD97B0044DEAB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		B76BFE01AC158347CCC30E18979D988E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1728CF9533D36362B4CC8858BB72DF8D /* ComposeAppCocoaPod.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D7EB1F9FB90E9FDE1E949AADA9347048 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4AB2AB9B52F1FA1E461F6833504711A3 /* WebRTC-SDK.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		23A6EB5F9A455DC5BE4A0F5A90086873 /* Build configuration list for PBXNativeTarget "Pods-iosApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C93197D9EC1F0672718721A72F11BEF /* Debug */,
+				268E73CC6D2A3E3D86FD48EA47F70939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8DE5143C03248BB6CD542DE3963D6F3A /* Debug */,
+				9E406C6AAF85E580207CD97B0044DEAB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7E35147DAB5BB22B6DF5EFFA080F9328 /* Build configuration list for PBXAggregateTarget "ComposeAppCocoaPod" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B76BFE01AC158347CCC30E18979D988E /* Debug */,
+				6B2872EA82188C027F33C37FBD563F01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CCAC9AD0EF08CB82D9A52E94C7A10474 /* Build configuration list for PBXAggregateTarget "WebRTC-SDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30836118024DBC1C178D8737A1672E06 /* Debug */,
+				D7EB1F9FB90E9FDE1E949AADA9347048 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+}

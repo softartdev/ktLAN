@@ -1,6 +1,7 @@
 package com.softartdev.ktlan.di
 
 import com.softartdev.ktlan.data.socket.SocketTransport
+import com.softartdev.ktlan.data.networks.NetworkInterfacesProvider
 import com.softartdev.ktlan.data.webrtc.IOSClientWebRTC
 import com.softartdev.ktlan.data.webrtc.ServerlessRTCClient
 import org.koin.core.module.Module
@@ -12,4 +13,5 @@ import org.koin.dsl.module
 actual val dataModule: Module = module {
     factoryOf(::IOSClientWebRTC) bind ServerlessRTCClient::class
     singleOf(::SocketTransport)
+    singleOf(::NetworkInterfacesProvider)
 }

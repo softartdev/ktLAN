@@ -56,8 +56,6 @@ class ConnectRepo(
         webRtcClient.console = SharedFlowConsole(mutableSharedFlow, coroutineDispatchers)
     }
 
-    fun init() = webRtcClient.init()
-
     fun waitForOffer() = webRtcClient.waitForOffer()
 
     fun processOffer(sdpJSON: String) = webRtcClient.processOffer(sdpJSON)

@@ -59,6 +59,7 @@ kotlin {
             implementation(libs.koin.core.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.napier)
+            implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -75,7 +76,10 @@ kotlin {
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-x86_64") })
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch64") })
             implementation(dependencies.variantOf(libs.webrtc.java) { classifier("linux-aarch32") })
-            implementation(libs.json)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
+            implementation(npm("webrtc-adapter", "9.0.1"))
         }
     }
     cocoapods {
@@ -90,6 +94,7 @@ kotlin {
         xcodeConfigurationToNativeBuildType["CUSTOM_DEBUG"] = NativeBuildType.DEBUG
         xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] = NativeBuildType.RELEASE
         ios.deploymentTarget = "13.0"
+        pod("WebRTC-SDK", version = "125.6422.07", moduleName = "WebRTC")
     }
 }
 
