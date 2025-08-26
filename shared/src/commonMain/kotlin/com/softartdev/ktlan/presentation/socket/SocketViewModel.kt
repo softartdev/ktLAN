@@ -17,27 +17,33 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** ViewModel orchestrating socket chat operations. */
 class SocketViewModel(
     private val router: Router,
     private val repo: SocketRepo,
     private val transport: SocketTransport,
     private val networksRepo: NetworksRepo,
+    private val navParameters: AppNavGraph.BottomTab.Socket,
 ) : ViewModel() {
     private val state = MutableStateFlow(SocketResult())
     val stateFlow: StateFlow<SocketResult> = state
     private var launched = false
 
-    /** Subscribe to repo and prefill local IP. */
     fun launch() = viewModelScope.launch {
         if (launched) return@launch
-        launched = true
 
         updateLocalIp()
 
+        navParameters.bindHost?.let { bindHost ->
+            state.update { it.copy(bindHost = bindHost) }
+        }
+        navParameters.remoteHost?.let { remoteHost ->
+            state.update { it.copy(remoteHost = remoteHost) }
+        }
         repo.observeMessages().onEach { msg: ChatMessage ->
             state.update { it.copy(messages = it.messages + msg) }
         }.launchIn(viewModelScope)
+
+        launched = true
     }
 
     suspend fun updateLocalIp() {

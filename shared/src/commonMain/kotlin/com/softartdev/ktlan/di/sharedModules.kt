@@ -4,6 +4,7 @@ import com.softartdev.ktlan.domain.repo.ConnectRepo
 import com.softartdev.ktlan.domain.repo.SocketRepo
 import com.softartdev.ktlan.domain.repo.NetworksRepo
 import com.softartdev.ktlan.domain.repo.ScanRepo
+import com.softartdev.ktlan.domain.usecase.ScanUseCase
 import com.softartdev.ktlan.presentation.connect.ConnectViewModel
 import com.softartdev.ktlan.presentation.socket.SocketViewModel
 import com.softartdev.ktlan.presentation.networks.NetworksViewModel
@@ -21,10 +22,14 @@ val sharedModules: List<Module>
 expect val dataModule: Module
 
 val domainModule: Module = module {
+    // Repositories (stateless data access layer)
     factoryOf(::ScanRepo)
     singleOf(::ConnectRepo)
     singleOf(::SocketRepo)
     singleOf(::NetworksRepo)
+    
+    // Use Cases (business logic layer with state management)
+    singleOf(::ScanUseCase)
 }
 
 val presentationModule: Module = module {

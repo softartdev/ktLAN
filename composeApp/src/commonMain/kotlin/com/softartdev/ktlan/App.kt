@@ -5,7 +5,6 @@ package com.softartdev.ktlan
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
@@ -22,55 +21,47 @@ import com.softartdev.ktlan.qr.QrDialogContent
 import com.softartdev.theme.material3.PreferableMaterialTheme
 import com.softartdev.theme.material3.ThemeDialogContent
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinMultiplatformApplication
+import org.koin.compose.KoinApplicationPreview
 import org.koin.compose.koinInject
 import org.koin.core.annotation.KoinExperimentalAPI
-import org.koin.core.logger.Level
-import org.koin.dsl.koinConfiguration
 
 @Composable
-fun App() = KoinMultiplatformApplication(
-    config = koinConfiguration { modules(sharedModules + uiModules) },
-    logLevel = Level.DEBUG
-) {
-    LaunchedEffect(Unit) { AppState.launch() }
-    PreferableMaterialTheme {
-        val navController = rememberNavController()
-        val router: Router = koinInject()
-        DisposableEffect(key1 = navController, key2 = router) {
-            router.setController(navController)
-            onDispose(router::releaseController)
+fun App() = PreferableMaterialTheme {
+    val navController = rememberNavController()
+    val router: Router = koinInject()
+    DisposableEffect(key1 = navController, key2 = router) {
+        router.setController(navController)
+        onDispose(router::releaseController)
+    }
+    EnableEdgeToEdge()
+    NavHost(
+        modifier = Modifier.imePadding(),
+        navController = navController,
+        startDestination = AppNavGraph.MainBottomNav,
+    ) {
+        composable<AppNavGraph.MainBottomNav> {
+            MainBottomNavScreen()
         }
-        EnableEdgeToEdge()
-        NavHost(
-            modifier = Modifier.imePadding(),
-            navController = navController,
-            startDestination = AppNavGraph.MainBottomNav,
-        ) {
-            composable<AppNavGraph.MainBottomNav> {
-                MainBottomNavScreen()
-            }
-            dialog<AppNavGraph.QrDialog> { backStackEntry: NavBackStackEntry ->
-                QrDialogContent(
-                    text = backStackEntry.toRoute<AppNavGraph.QrDialog>().text,
-                    dismissDialog = navController::navigateUp
-                )
-            }
-            dialog<AppNavGraph.ThemeDialog> {
-                ThemeDialogContent(dismissDialog = navController::popBackStack)
-            }
-            dialog<AppNavGraph.ErrorDialog> { backStackEntry: NavBackStackEntry ->
-                Error(
-                    message = backStackEntry.toRoute<AppNavGraph.ErrorDialog>().message.orEmpty(),
-                    onRetry = navController::navigateUp,
-                )
-            }
+        dialog<AppNavGraph.QrDialog> { backStackEntry: NavBackStackEntry ->
+            QrDialogContent(
+                text = backStackEntry.toRoute<AppNavGraph.QrDialog>().text,
+                dismissDialog = navController::navigateUp
+            )
+        }
+        dialog<AppNavGraph.ThemeDialog> {
+            ThemeDialogContent(dismissDialog = navController::popBackStack)
+        }
+        dialog<AppNavGraph.ErrorDialog> { backStackEntry: NavBackStackEntry ->
+            Error(
+                message = backStackEntry.toRoute<AppNavGraph.ErrorDialog>().message.orEmpty(),
+                onRetry = navController::navigateUp,
+            )
         }
     }
 }
 
 @Preview
 @Composable
-fun AppPreview() {
+fun AppPreview() = KoinApplicationPreview(application = { modules(sharedModules + uiModules) }) {
     App()
 }

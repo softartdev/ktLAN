@@ -6,7 +6,7 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 class ScanResultPreviewProvider : PreviewParameterProvider<ScanResult> {
     override val values: Sequence<ScanResult> = sequenceOf(
         ScanResult.Loading,
-        ScanResult.Success(),
+        ScanResult.Success(hosts = ScanResult.Success.previewHosts),
         ScanResult.Error("An error occurred")
     )
 }

@@ -1,4 +1,4 @@
-package com.softartdev.ktlan.test_util
+package com.softartdev.ktlan.domain.util
 
 import io.github.aakira.napier.Antilog
 import io.github.aakira.napier.LogLevel

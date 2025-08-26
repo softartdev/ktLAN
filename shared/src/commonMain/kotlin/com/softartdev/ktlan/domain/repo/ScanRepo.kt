@@ -16,7 +16,11 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class ScanRepo {
+/**
+ * Repository for network scanning operations.
+ * Stateless data access layer following Clean Architecture principles.
+ */
+open class ScanRepo {
     private val client: HttpClient = HttpClient(CIO) {
         install(Logging) {
             level = LogLevel.BODY
@@ -28,7 +32,7 @@ class ScanRepo {
     }
 
     // Scans a range of IP addresses for open ports parallelly using coroutines Jobs.
-    suspend fun scanRangeParallel(
+    open suspend fun scanRangeParallel(
         coroutineContext: CoroutineContext,
         startIp: String,
         endIp: String,

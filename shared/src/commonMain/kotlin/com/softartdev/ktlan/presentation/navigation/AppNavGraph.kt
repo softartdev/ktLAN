@@ -13,6 +13,12 @@ sealed interface AppNavGraph {
         data object Connect : BottomTab
 
         @Serializable
+        data class Scan(val startIp: String? = null, val endIp: String? = null) : BottomTab
+
+        @Serializable
+        data class Socket(val remoteHost: String? = null, val bindHost: String? = null) : BottomTab
+
+        @Serializable
         data object Settings : BottomTab
     }
 

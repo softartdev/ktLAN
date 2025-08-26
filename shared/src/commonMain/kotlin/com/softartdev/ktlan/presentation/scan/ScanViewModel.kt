@@ -2,27 +2,60 @@ package com.softartdev.ktlan.presentation.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softartdev.ktlan.domain.model.HostModel
-import com.softartdev.ktlan.domain.repo.ScanRepo
+import com.softartdev.ktlan.domain.usecase.ScanState
+import com.softartdev.ktlan.domain.usecase.ScanUseCase
+import com.softartdev.ktlan.presentation.navigation.AppNavGraph
 import com.softartdev.ktlan.presentation.navigation.Router
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class ScanViewModel(
-    private val scanRepo: ScanRepo,
-    private val router: Router
+    private val scanUseCase: ScanUseCase,
+    private val router: Router,
+    private val navParameters: AppNavGraph.BottomTab.Scan
 ) : ViewModel() {
-
-    private val mutableStateFlow: MutableStateFlow<ScanResult> = MutableStateFlow(
-        value = ScanResult.Success()
+    
+    // Local UI state (input fields)
+    private val _uiState = MutableStateFlow(
+        ScanResult.Success()
     )
-    val stateFlow: StateFlow<ScanResult> = mutableStateFlow
+    
+    // Combined state from use case and local UI state
+    private val _combinedState = MutableStateFlow<ScanResult>(ScanResult.Success())
+    val stateFlow: StateFlow<ScanResult> = _combinedState
 
     private val currentSuccessStateOrDefault: ScanResult.Success
-        get() = mutableStateFlow.value as? ScanResult.Success ?: ScanResult.Success()
+        get() = _uiState.value
+
+    private var launched = false
+
+    init {
+        // Combine use case state with local UI state
+        combine(
+            scanUseCase.scanState,
+            _uiState
+        ) { useCaseState, uiState ->
+            when (useCaseState) {
+                is ScanState.Idle -> uiState
+                is ScanState.Loading -> ScanResult.Loading
+                is ScanState.Success -> uiState.copy(hosts = useCaseState.hosts)
+                is ScanState.Error -> ScanResult.Error(useCaseState.message)
+            }
+        }.onEach { combinedState ->
+            _combinedState.value = combinedState
+        }.launchIn(viewModelScope)
+    }
+
+    fun launch() {
+        if (launched) return
+        navParameters.startIp?.let(::updateStartIp)
+        navParameters.endIp?.let(::updateEndIp)
+        launched = true
+    }
 
     fun onAction(action: ScanAction) = when (action) {
         is ScanAction.UpdateStartIp -> updateStartIp(action.startIp)
@@ -31,55 +64,53 @@ class ScanViewModel(
         is ScanAction.LaunchScan -> launchScan()
         is ScanAction.ResetScan -> resetScan()
         is ScanAction.ClearError -> clearError()
+        is ScanAction.UseAsRemoteHost -> useAsRemoteHost(action.address)
     }
 
-    private fun launchScan() = viewModelScope.launch {
+    private fun launchScan() {
         val scan: ScanResult.Success = currentSuccessStateOrDefault
-        mutableStateFlow.value = ScanResult.Loading
-        try {
-            val hostModels: List<HostModel> = scanRepo.scanRangeParallel(
-                coroutineContext = Dispatchers.Default,
-                startIp = scan.startIp,
-                endIp = scan.endIp,
-                ports = scan.ports
-            )
-            mutableStateFlow.value = scan.copy(hosts = hostModels)
-        } catch (error: Throwable) {
-            Napier.e("error during scan", error)
-            mutableStateFlow.value = ScanResult.Error(error.message ?: "Unknown error")
-        }
+        scanUseCase.startScan(
+            startIp = scan.startIp,
+            endIp = scan.endIp,
+            ports = scan.ports
+        )
     }
 
     private fun updateStartIp(string: String) {
-        mutableStateFlow.value = currentSuccessStateOrDefault.copy(startIp = string)
+        _uiState.value = currentSuccessStateOrDefault.copy(startIp = string)
         Napier.d("Start IP updated to: $string")
     }
 
     private fun updateEndIp(string: String) {
-        mutableStateFlow.value = currentSuccessStateOrDefault.copy(endIp = string)
+        _uiState.value = currentSuccessStateOrDefault.copy(endIp = string)
         Napier.d("End IP updated to: $string")
     }
 
     private fun updatePorts(string: String) {
         val ports: List<Int> = string.split(",")
-            .map<String, String>(String::trim)
+            .map(String::trim)
             .mapNotNull(String::toIntOrNull)
-        mutableStateFlow.value = currentSuccessStateOrDefault.copy(ports = ports)
+        _uiState.value = currentSuccessStateOrDefault.copy(ports = ports)
         Napier.d("Ports updated to: $ports")
     }
 
     private fun resetScan() {
-        mutableStateFlow.value = ScanResult.Success()
+        scanUseCase.resetScan()
+        _uiState.value = ScanResult.Success()
         Napier.d("Scan reset to default values")
         clearError()
     }
 
     private fun clearError() {
-        if (mutableStateFlow.value is ScanResult.Error) {
-            mutableStateFlow.value = currentSuccessStateOrDefault
-            Napier.d("Error cleared")
+        if (_combinedState.value is ScanResult.Error) {
+            scanUseCase.resetScan()
         } else {
             Napier.w("No error to clear")
         }
+    }
+
+    private fun useAsRemoteHost(address: String) {
+        router.bottomNavigate(AppNavGraph.BottomTab.Socket(remoteHost = address))
+        Napier.d("Navigating to Socket with remote host: $address")
     }
 }

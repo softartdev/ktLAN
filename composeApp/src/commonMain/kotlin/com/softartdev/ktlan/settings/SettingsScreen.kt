@@ -11,6 +11,7 @@ import com.softartdev.ktlan.Loader
 import com.softartdev.ktlan.presentation.settings.SettingsAction
 import com.softartdev.ktlan.presentation.settings.SettingsResult
 import com.softartdev.ktlan.presentation.settings.SettingsViewModel
+import com.softartdev.theme.material3.PreferableMaterialTheme
 import com.softartdev.theme.material3.ThemePreferenceItem
 import com.softartdev.theme.material3.ThemePreferencesCategory
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -44,6 +45,6 @@ fun SettingsContent(
 
 @Preview
 @Composable
-fun SettingsScreenPreview() {
+fun SettingsScreenPreview() = PreferableMaterialTheme {
     SettingsContent(onAction = {})
 }

@@ -14,7 +14,28 @@ data class SocketResult(
     val messages: List<ChatMessage> = emptyList(),
     val draft: String = "",
     val error: String? = null
-)
+) {
+    companion object {
+        val previewMessages: List<ChatMessage>
+            get() = listOf(
+                ChatMessage(
+                    sender = ChatMessage.Sender.Local,
+                    text = "Hello",
+                    timestamp = 0
+                ),
+                ChatMessage(
+                    sender = ChatMessage.Sender.Remote,
+                    text = "Hi there!",
+                    timestamp = 0
+                ),
+                ChatMessage(
+                    sender = ChatMessage.Sender.Local,
+                    text = "How are you?",
+                    timestamp = 0
+                )
+            )
+    }
+}
 
 sealed interface SocketAction {
     data class StartServer(val bindHost: String, val bindPort: String) : SocketAction

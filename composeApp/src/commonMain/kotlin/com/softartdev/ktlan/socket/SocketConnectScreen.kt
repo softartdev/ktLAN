@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -198,21 +199,14 @@ fun SocketConnectInput(
 
 @Preview
 @Composable
-fun SocketConnectPreview() {
-    val messages = listOf(
-        ChatMessage(
-            sender = ChatMessage.Sender.Local,
-            text = "Hello",
-            timestamp = 0
-        ),
-        ChatMessage(
-            sender = ChatMessage.Sender.Remote,
-            text = "Hi",
-            timestamp = 0
-        )
-    )
+fun SocketConnectPreview() = Surface {
     SocketConnectContent(
-        result = SocketResult(connected = true, messages = messages, bindHost = "192.168.1.2"),
+        result = SocketResult(
+            connected = true,
+            messages = SocketResult.previewMessages,
+            bindHost = "192.168.1.2",
+            remoteHost = "192.168.1.3",
+        ),
         onAction = {}
     )
 }

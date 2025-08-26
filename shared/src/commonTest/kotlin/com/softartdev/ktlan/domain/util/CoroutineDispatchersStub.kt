@@ -1,6 +1,5 @@
-package com.softartdev.ktlan.test_util
+package com.softartdev.ktlan.domain.util
 
-import com.softartdev.ktlan.domain.util.CoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler

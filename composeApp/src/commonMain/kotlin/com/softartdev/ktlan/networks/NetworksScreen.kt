@@ -14,13 +14,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -44,23 +43,19 @@ import ktlan.composeapp.generated.resources.networks_refresh
 import ktlan.composeapp.generated.resources.networks_title
 import ktlan.composeapp.generated.resources.networks_use
 import ktlan.composeapp.generated.resources.networks_your_ip
+import ktlan.composeapp.generated.resources.scan
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun NetworksScreen(viewModel: NetworksViewModel) {
-    val result by viewModel.stateFlow.collectAsState()
+    val result: NetworksResult by viewModel.stateFlow.collectAsState()
     LaunchedEffect(viewModel) { viewModel.launch() }
-    NetworksContent(result, viewModel::onAction, viewModel)
+    NetworksContent(result, viewModel::onAction)
 }
 
 @Composable
-fun NetworksContent(result: NetworksResult, onAction: (NetworksAction) -> Unit, viewModel: NetworksViewModel? = null) {
-    val clipboard: ClipboardManager = LocalClipboardManager.current
-    val yourIp = viewModel?.let { remember { mutableStateOf<String?>(null) } }
-    LaunchedEffect(Unit) {
-        if (viewModel != null) yourIp?.value = viewModel.guessLocalIp()
-    }
+fun NetworksContent(result: NetworksResult, onAction: (NetworksAction) -> Unit) {
     Column(modifier = Modifier.padding(8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -73,7 +68,7 @@ fun NetworksContent(result: NetworksResult, onAction: (NetworksAction) -> Unit, 
                 Text(stringResource(Res.string.networks_refresh))
             }
         }
-        yourIp?.value?.let { ip ->
+        result.yourIp?.let { ip: String ->
             Text(text = stringResource(Res.string.networks_your_ip) + ": $ip")
         }
         Spacer(Modifier.padding(vertical = 4.dp))
@@ -82,7 +77,7 @@ fun NetworksContent(result: NetworksResult, onAction: (NetworksAction) -> Unit, 
         } else {
             LazyColumn {
                 items(result.interfaces) { ni: NetworkInterfaceInfo ->
-                    NetworkInterfaceItem(ni, onAction, clipboard)
+                    NetworkInterfaceItem(ni, onAction)
                 }
             }
         }
@@ -90,7 +85,11 @@ fun NetworksContent(result: NetworksResult, onAction: (NetworksAction) -> Unit, 
 }
 
 @Composable
-private fun NetworkInterfaceItem(info: NetworkInterfaceInfo, onAction: (NetworksAction) -> Unit, clipboard: ClipboardManager) {
+private fun NetworkInterfaceItem(
+    info: NetworkInterfaceInfo,
+    onAction: (NetworksAction) -> Unit,
+) {
+    val clipboard: ClipboardManager = LocalClipboardManager.current
     Card(modifier = Modifier.padding(vertical = 4.dp)) {
         Column(modifier = Modifier.padding(8.dp)) {
             Text(stringResource(Res.string.networks_interface) + ": ${info.name}")
@@ -104,15 +103,20 @@ private fun NetworkInterfaceItem(info: NetworkInterfaceInfo, onAction: (Networks
                 info.ipv4.forEach { ip ->
                     ListItem(
                         headlineContent = { Text(ip) },
-                        trailingContent = {
+                        supportingContent = {
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Button(onClick = {
-                                    clipboard.setText(AnnotatedString(ip))
-                                    onAction(NetworksAction.Copy(ip))
-                                }) { Text(stringResource(Res.string.networks_copy)) }
-                                Button(onClick = { onAction(NetworksAction.UseAsBindHost(ip)) }) {
-                                    Text(stringResource(Res.string.networks_use))
-                                }
+                                Button(
+                                    onClick = { clipboard.setText(AnnotatedString(ip)) },
+                                    content = { Text(stringResource(Res.string.networks_copy)) }
+                                )
+                                Button(
+                                    onClick = { onAction(NetworksAction.UseAsBindHost(ip)) },
+                                    content = { Text(stringResource(Res.string.networks_use)) }
+                                )
+                                Button(
+                                    onClick = { onAction(NetworksAction.Scan(ip)) },
+                                    content = { Text(stringResource(Res.string.scan)) }
+                                )
                             }
                         }
                     )
@@ -130,24 +134,9 @@ private fun NetworkInterfaceItem(info: NetworkInterfaceInfo, onAction: (Networks
 
 @Preview
 @Composable
-fun NetworksPreview() {
-    val interfaces = listOf(
-        NetworkInterfaceInfo(
-            name = "eth0",
-            isUp = true,
-            isLoopback = false,
-            supportsMulticast = true,
-            ipv4 = listOf("192.168.0.10"),
-            ipv6 = listOf("fe80::1")
-        ),
-        NetworkInterfaceInfo(
-            name = "lo",
-            isUp = true,
-            isLoopback = true,
-            supportsMulticast = false,
-            ipv4 = listOf("127.0.0.1"),
-            ipv6 = emptyList()
-        )
+fun NetworksPreview() = Surface {
+    NetworksContent(
+        result = NetworksResult(interfaces = NetworksResult.previewInterfaces),
+        onAction = {}
     )
-    NetworksContent(result = NetworksResult(interfaces = interfaces), onAction = {}, viewModel = null)
 }

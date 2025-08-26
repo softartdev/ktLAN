@@ -2,19 +2,15 @@
 
 package com.softartdev.ktlan.presentation.socket
 
-import com.softartdev.ktlan.data.networks.NetworkInterfacesProvider
 import com.softartdev.ktlan.data.socket.SocketTransport
-import com.softartdev.ktlan.domain.model.ChatMessage
-import com.softartdev.ktlan.domain.model.NetworkInterfaceInfo
-import com.softartdev.ktlan.domain.repo.NetworksRepo
-import com.softartdev.ktlan.domain.repo.SocketRepo
-import com.softartdev.ktlan.domain.util.CoroutineDispatchers
-import com.softartdev.ktlan.presentation.navigation.Router
-import com.softartdev.ktlan.test_util.CoroutineDispatchersStub
-import com.softartdev.ktlan.test_util.PrintAntilog
+import com.softartdev.ktlan.domain.repo.NetworkRepoStub
+import com.softartdev.ktlan.domain.repo.SocketRepoStub
+import com.softartdev.ktlan.presentation.navigation.AppNavGraph
+import com.softartdev.ktlan.presentation.navigation.RouterStub
+import com.softartdev.ktlan.domain.util.CoroutineDispatchersStub
+import com.softartdev.ktlan.domain.util.PrintAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -23,47 +19,18 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
 
-private class FakeRepo(dispatchers: CoroutineDispatchers) : SocketRepo(SocketTransport(dispatchers), dispatchers) {
-    val sent = mutableListOf<String>()
-    private val _messages = MutableSharedFlow<ChatMessage>()
-    override fun observeMessages() = _messages
-    override suspend fun getLocalIp(): String = "192.168.0.1"
-    override suspend fun startServer(bindHost: String, bindPort: Int) {}
-    override suspend fun connectTo(remoteHost: String, remotePort: Int) {}
-    override suspend fun send(text: String) { sent += text }
-    override suspend fun stop() {}
-}
-
-private class FakeRouter : Router {
-    var last: Any? = null
-    override fun setController(navController: Any) {}
-    override fun releaseController() {}
-    override fun <T : Any> navigate(route: T) { last = route }
-    override fun <T : Any> navigateClearingBackStack(route: T) { last = route }
-    override fun <T : Any> popBackStack(route: T, inclusive: Boolean, saveState: Boolean) = false
-    override fun popBackStack() = false
-}
-
-private class FakeNetworkRepo(dispatchers: CoroutineDispatchers) : NetworksRepo(
-    provider = NetworkInterfacesProvider(dispatchers),
-    dispatchers = dispatchers
-) {
-    override suspend fun listInterfaces(): List<NetworkInterfaceInfo> = emptyList()
-    override suspend fun guessLocalIPv4(): String? = "192.168.0.1"
-}
-
 class SocketViewModelTest {
     private var testDispatchers: CoroutineDispatchersStub? = null
-    private var repo: FakeRepo? = null
+    private var repo: SocketRepoStub? = null
     private var vm: SocketViewModel? = null
     
     @BeforeTest
     fun setup() = runTest {
         Napier.base(PrintAntilog())
         testDispatchers = CoroutineDispatchersStub()
-        repo = FakeRepo(testDispatchers!!)
-        val networksRepo = FakeNetworkRepo(testDispatchers!!)
-        vm = SocketViewModel(FakeRouter(), repo!!, SocketTransport(testDispatchers!!), networksRepo)
+        repo = SocketRepoStub(testDispatchers!!)
+        val networksRepo = NetworkRepoStub(testDispatchers!!)
+        vm = SocketViewModel(RouterStub(), repo!!, SocketTransport(testDispatchers!!), networksRepo, AppNavGraph.BottomTab.Socket())
     }
 
     @AfterTest

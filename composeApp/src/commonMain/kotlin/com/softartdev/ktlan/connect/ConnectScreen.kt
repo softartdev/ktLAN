@@ -46,7 +46,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.softartdev.ktlan.AnimatedKeyboardVisibility
-import com.softartdev.ktlan.data.webrtc.P2pState
 import com.softartdev.ktlan.data.webrtc.P2pState.CHAT_ESTABLISHED
 import com.softartdev.ktlan.data.webrtc.P2pState.WAITING_FOR_ANSWER
 import com.softartdev.ktlan.data.webrtc.P2pState.WAITING_FOR_OFFER
@@ -71,7 +70,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.ncgroup.kscan.BarcodeFormat
 import org.ncgroup.kscan.BarcodeResult
 import org.ncgroup.kscan.ScannerView
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +86,8 @@ fun ConnectScreen(connectViewModel: ConnectViewModel) {
 fun ConnectContent(
     modifier: Modifier = Modifier,
     result: ConnectResult,
-    onAction: (ConnectAction) -> Unit
+    onAction: (ConnectAction) -> Unit,
+    cameraPermissionState: CameraPermissionState = rememberCameraPermissionState()
 ) {
     val lazyListState: LazyListState = rememberLazyListState()
     val scrollProgressState: State<Float> = remember {
@@ -108,7 +107,6 @@ fun ConnectContent(
     var showQrScanner: Boolean by remember { mutableStateOf(false) }
     val cancelledMessage: String = stringResource(Res.string.cancelled)
     val cameraUnavailableMessage: String = stringResource(Res.string.camera_is_not_available)
-    val cameraPermissionState: CameraPermissionState = rememberCameraPermissionState()
     LaunchedEffect(key1 = result.consoleMessages) {
         val lastIndex = result.consoleMessages.lastIndex
         if (lastIndex < 0) return@LaunchedEffect
@@ -242,14 +240,15 @@ fun ConnectContent(
 @Preview
 @Composable
 fun ConnectContentPreview() {
-    val messages: List<ConsoleMessage> = P2pState.entries.map { p2pState ->
-        ConsoleMessage(
-            leading = "🔔",
-            overline = Clock.System.now().toString(),
-            headline = p2pState.name,
-            supporting = "This is a sample message for state ${p2pState.name}",
-            trailing = "🦄"
-        )
-    }
-    ConnectContent(result = ConnectResult(consoleMessages = messages), onAction = {})
+    ConnectContent(
+        result = ConnectResult(consoleMessages = ConnectResult.previewMessages),
+        onAction = {},
+        cameraPermissionState = PreviewCameraPermissionState()
+    )
+}
+
+class PreviewCameraPermissionState : CameraPermissionState {
+    override val isAvailable: Boolean = true
+    override val permission: CameraPermission = CameraPermission.Granted
+    override fun launchRequest() {}
 }

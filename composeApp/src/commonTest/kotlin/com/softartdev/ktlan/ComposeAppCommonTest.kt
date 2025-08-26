@@ -6,7 +6,5 @@ import kotlin.test.assertEquals
 class ComposeAppCommonTest {
 
     @Test
-    fun example() {
-        assertEquals(3, 1 + 2)
-    }
+    fun example() = assertEquals(3, 1 + 2)
 }
