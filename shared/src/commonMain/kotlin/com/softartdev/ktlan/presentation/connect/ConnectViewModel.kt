@@ -15,7 +15,7 @@ import com.softartdev.ktlan.domain.model.ConsoleMessage
 import com.softartdev.ktlan.domain.repo.ConnectRepo
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph.QrDialog
 import com.softartdev.ktlan.presentation.navigation.Router
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -29,12 +29,13 @@ class ConnectViewModel(
     private val router: Router,
     private val connectRepo: ConnectRepo
 ) : ViewModel() {
+    private val logger = Logger.withTag("ConnectViewModel")
     private val mutableStateFlow = MutableStateFlow(value = ConnectResult())
     val stateFlow: StateFlow<ConnectResult> = mutableStateFlow
     private var launched: Boolean = false
 
     fun launch() {
-        Napier.d(message = "launched = $launched")
+        logger.d { "launched = $launched" }
         if (launched) return
         launched = true
 
@@ -76,15 +77,14 @@ class ConnectViewModel(
                 is ConnectAction.ShowQr -> router.navigate(
                     route = QrDialog(text = action.text)
                 )
-                is ConnectAction.PrintError -> connectRepo.webRtcClient.console.e(
-                    text = action.exception.message ?: "Unknown error",
-                    action.exception.stackTraceToString()
+                is ConnectAction.PrintError -> connectRepo.webRtcClient.console.error(
+                    action.exception.message ?: "Unknown error"
                 )
-                is ConnectAction.PrintConsole -> connectRepo.webRtcClient.console.d(action.message)
+                is ConnectAction.PrintConsole -> connectRepo.webRtcClient.console.debug(action.message)
             }
             mutableStateFlow.value = result.copy(loading = false)
         } catch (throwable: Throwable) {
-            Napier.e(message = "Error processing action: $action", throwable = throwable)
+            logger.e(throwable) { "Error processing action: $action" }
             val consoleMessage = ConsoleMessage(
                 leading = "❌",
                 overline = Clock.System.now().toString(),

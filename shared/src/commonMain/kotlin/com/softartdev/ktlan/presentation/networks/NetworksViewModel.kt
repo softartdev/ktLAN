@@ -6,7 +6,7 @@ import com.softartdev.ktlan.domain.model.NetworkInterfaceInfo
 import com.softartdev.ktlan.domain.repo.NetworksRepo
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph
 import com.softartdev.ktlan.presentation.navigation.Router
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -16,6 +16,7 @@ class NetworksViewModel(
     private val repo: NetworksRepo,
     private val router: Router
 ) : ViewModel() {
+    private val logger = Logger.withTag("NetworksViewModel")
     private val state = MutableStateFlow(NetworksResult())
     val stateFlow: StateFlow<NetworksResult> = state
     private var launched = false
@@ -36,7 +37,7 @@ class NetworksViewModel(
                         state.update { it.copy(loading = false, interfaces = list) }
                     }
                     .onFailure { e: Throwable ->
-                        Napier.e("Failed to list interfaces", e)
+                        logger.e(e) { "Failed to list interfaces" }
                         state.update { it.copy(loading = false, error = e.message) }
                     }
             }
@@ -62,7 +63,7 @@ class NetworksViewModel(
     private fun convertToNetworkRange(ip: String): Pair<String, String> {
         val parts: List<String> = ip.split('.')
         if (parts.size != 4) {
-            Napier.e("Invalid IP address format: $ip")
+            logger.e { "Invalid IP address format: $ip" }
             return "0.0.0.0" to "255.255.255.255"
         }
         val networkPart: String = parts.take(3).joinToString(".")

@@ -42,4 +42,8 @@ jobs:
           path: |
             build/reports/problems
             shared/build/reports
-            composeApp/build/reports
+            app/shared/build/reports
+            app/android/build/reports
+            app/desktop/build/reports
+            app/ios-kit/build/reports
+            app/web/build/reports

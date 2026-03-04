@@ -1,30 +1,43 @@
 package com.softartdev.ktlan.data.webrtc
 
 interface IConsole {
-
+    /**
+     * Print formatted text with optional arguments
+     */
     fun printf(text: String, vararg args: Any)
 
-    fun d(text: String, vararg args: Any) {
-        printf("<font color=\"#673AB7\">$text</font>")
+    /**
+     * Print debug information
+     */
+    fun debug(text: String, vararg args: Any) {
+        printf(text, *args)
     }
 
-    fun i(text: String, vararg args: Any) {
-        greenf(text, args)
+    /**
+     * Print info information
+     */
+    fun info(text: String, vararg args: Any) {
+        printf(text, *args)
     }
 
-    fun e(text: String, vararg args: Any) {
-        redf(text, args)
+    /**
+     * Print error information
+     */
+    fun error(text: String, vararg args: Any) {
+        printf(text, *args)
     }
 
-    fun greenf(text: String, vararg args: Any) {
-        printf("<font color=\"#009900\">$text</font>")
+    /**
+     * Print success information
+     */
+    fun success(text: String, vararg args: Any) {
+        printf(text, *args)
     }
 
-    fun bluef(text: String, vararg args: Any) {
-        printf("<font color=\"#000099\">$text</font>")
-    }
-
-    fun redf(text: String, vararg args: Any) {
-        printf("<font color=\"#990000\">$text</font>")
+    /**
+     * Print warning information
+     */
+    fun warning(text: String, vararg args: Any) {
+        printf(text, *args)
     }
 }

@@ -8,7 +8,7 @@ import com.softartdev.ktlan.data.socket.getLocalIp
 import com.softartdev.ktlan.domain.model.ChatMessage
 import com.softartdev.ktlan.domain.model.ChatMessage.Sender
 import com.softartdev.ktlan.domain.util.CoroutineDispatchers
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,6 +24,7 @@ open class SocketRepo(
     private val transport: SocketTransport,
     private val dispatchers: CoroutineDispatchers
 ) {
+    private val logger = Logger.withTag("SocketRepo")
     private val scope = CoroutineScope(dispatchers.default)
     private val messages = MutableSharedFlow<ChatMessage>()
 
@@ -35,7 +36,7 @@ open class SocketRepo(
 
     /** Start server and wait for the first incoming client. */
     open suspend fun startServer(bindHost: String, bindPort: Int) {
-        Napier.d("Starting server on $bindHost:$bindPort")
+        logger.d { "Starting server on $bindHost:$bindPort" }
         stop()
         val (conn, stop) = transport.startServer(bindHost, bindPort)
         connection = conn
@@ -45,7 +46,7 @@ open class SocketRepo(
 
     /** Connect to remote endpoint. */
     open suspend fun connectTo(remoteHost: String, remotePort: Int) {
-        Napier.d("Connecting to $remoteHost:$remotePort")
+        logger.d { "Connecting to $remoteHost:$remotePort" }
         stop()
         val conn = transport.connect(SocketEndpoint(remoteHost, remotePort))
         connection = conn

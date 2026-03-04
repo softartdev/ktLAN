@@ -5,48 +5,39 @@
 
 A modern, cross-platform LAN (Local Area Network) communication application built with Kotlin Multiplatform. ktLAN enables seamless peer-to-peer communication across multiple platforms including Android, iOS, Web, Desktop, and Server environments.
 
+The **wasmJS** target can be checked online at [https://softartdev.github.io/ktLAN/](https://softartdev.github.io/ktLAN/) powered by GitHub Pages.
+
 ## Features
 
 - **Cross-Platform Support**: Native applications for Android, iOS, Desktop, and Web
-- **Real-time Communication**: WebRTC-powered peer-to-peer messaging and file sharing
+- **Real-time Communication**: Ktor WebRTC client-powered peer-to-peer messaging and file sharing
 - **QR Code Integration**: Easy device discovery and connection via QR code scanning
 - **Network Discovery**: Automatic detection of devices on the same LAN
 - **Modern UI**: Built with Compose Multiplatform for consistent, native-like experience
 - **Server Component**: Optional server for enhanced functionality and centralized features
 
-## Technology Stack
+## Developer Guide
 
-- **Kotlin Multiplatform**: Shared business logic across all platforms
-- **Compose Multiplatform**: Modern declarative UI framework
-- **WebRTC**: Real-time communication capabilities
-- **Ktor**: Server-side framework for backend services
-- **Kotlin/Wasm**: Web deployment with WebAssembly
+For detailed info about technology stack, directory structure, building and running the project, please refer to [AGENTS.md](AGENTS.md).
 
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop, Server.
+### App Modules
 
-The **wasmJS** target can be checked online at [https://softartdev.github.io/ktLAN/](https://softartdev.github.io/ktLAN/) powered by GitHub Pages.
+- `:app:shared` - shared Compose UI and platform `expect/actual` implementations
+- `:app:android` - Android application target
+- `:app:desktop` - desktop launcher/distribution target
+- `:app:ios-kit` - iOS framework/CocoaPods integration target
+- `:app:web` - WebAssembly (wasmJs) launcher target
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that's common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple's CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+### WebRTC Stack
 
-* `/iosApp` contains iOS applications. Even if you're sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+- `io.ktor:ktor-client-webrtc` is the unified WebRTC API across Android, iOS, Desktop, and Web.
+- Desktop uses a JVM engine adapter backed by `dev.onvoid.webrtc:webrtc-java` to bridge into Ktor's WebRTC abstractions.
 
-* `/server` is for the Ktor server application.
+## Learn More
 
-* `/shared` is for the code that will be shared between all targets in the project.
-  The most important subfolder is `commonMain`. If preferred, you can add code to the platform-specific folders here too.
-
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+* [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
+* [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform)
+* [Kotlin/Wasm](https://kotl.in/wasm/)
 
 We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
 If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
-
-You can open the web application by running the `:composeApp:wasmJsBrowserDevelopmentRun` Gradle task.

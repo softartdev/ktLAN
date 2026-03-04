@@ -32,9 +32,9 @@ class SharedFlowConsole(
         )
     )
 
-    override fun d(text: String, vararg args: Any) = print(
+    override fun debug(text: String, vararg args: Any) = print(
         consoleMessage = ConsoleMessage(
-            leading = "✉️",
+            leading = "⚪️",
             overline = Clock.System.now().toString(),
             headline = text,
             supporting = args.joinToString(),
@@ -42,7 +42,7 @@ class SharedFlowConsole(
         )
     )
 
-    override fun i(text: String, vararg args: Any) = print(
+    override fun info(text: String, vararg args: Any) = print(
         consoleMessage = ConsoleMessage(
             leading = "ℹ️",
             overline = Clock.System.now().toString(),
@@ -52,7 +52,7 @@ class SharedFlowConsole(
         )
     )
 
-    override fun e(text: String, vararg args: Any) = print(
+    override fun error(text: String, vararg args: Any) = print(
         consoleMessage = ConsoleMessage(
             leading = "❌",
             overline = Clock.System.now().toString(),
@@ -62,9 +62,9 @@ class SharedFlowConsole(
         )
     )
 
-    override fun greenf(text: String, vararg args: Any) = print(
+    override fun success(text: String, vararg args: Any) = print(
         consoleMessage = ConsoleMessage(
-            leading = "🟢",
+            leading = "✅",
             overline = Clock.System.now().toString(),
             headline = text,
             supporting = args.joinToString(),
@@ -72,19 +72,9 @@ class SharedFlowConsole(
         )
     )
 
-    override fun bluef(text: String, vararg args: Any) = print(
+    override fun warning(text: String, vararg args: Any) = print(
         consoleMessage = ConsoleMessage(
-            leading = "🔵",
-            overline = Clock.System.now().toString(),
-            headline = text,
-            supporting = args.joinToString(),
-            trailing = "🦄"
-        )
-    )
-
-    override fun redf(text: String, vararg args: Any) = print(
-        consoleMessage = ConsoleMessage(
-            leading = "🔴",
+            leading = "⚠️",
             overline = Clock.System.now().toString(),
             headline = text,
             supporting = args.joinToString(),

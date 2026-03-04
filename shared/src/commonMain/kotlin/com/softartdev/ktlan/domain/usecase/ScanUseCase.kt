@@ -1,7 +1,7 @@
 package com.softartdev.ktlan.domain.usecase
 
 import com.softartdev.ktlan.domain.repo.ScanRepo
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 open class ScanUseCase(
     private val scanRepo: ScanRepo
 ) {
+    private val logger = Logger.withTag("ScanUseCase")
     // Long-lived scope for scan operations that survive ViewModel recreation
     private val scanScope = CoroutineScope(SupervisorJob())
     
@@ -46,7 +47,7 @@ open class ScanUseCase(
                 )
                 _scanState.value = ScanState.Success(hosts)
             } catch (error: Throwable) {
-                Napier.e("Error during scan", error)
+                logger.e(error) { "Error during scan" }
                 _scanState.value = ScanState.Error(error.message ?: "Unknown error")
             }
         }

@@ -7,16 +7,19 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.kotlinCocoapods)
 }
 
 kotlin {
-    androidTarget {
+    android {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+        namespace = "com.softartdev.ktlan.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 
     iosX64()
@@ -32,11 +35,9 @@ kotlin {
             val projectDirPath = project.projectDir.path
             commonWebpackConfig {
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(rootDirPath)
-                        add(projectDirPath)
-                    }
+                    // Serve sources to debug inside browser
+                    static(rootDirPath)
+                    static(projectDirPath)
                 }
             }
         }
@@ -52,13 +53,14 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.webrtc)
             implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.network)
             implementation(libs.koin.core)
             implementation(libs.koin.core.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.napier)
+            implementation(libs.kermit)
             implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
@@ -67,7 +69,6 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.stream.webrtc.android)
         }
         jvmMain.dependencies {
             implementation(libs.webrtc.java)
@@ -79,7 +80,6 @@ kotlin {
         }
         wasmJsMain.dependencies {
             implementation(libs.kotlinx.browser)
-            implementation(npm("webrtc-adapter", "9.0.1"))
         }
     }
     cocoapods {
@@ -94,18 +94,6 @@ kotlin {
         xcodeConfigurationToNativeBuildType["CUSTOM_DEBUG"] = NativeBuildType.DEBUG
         xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] = NativeBuildType.RELEASE
         ios.deploymentTarget = "13.0"
-        pod("WebRTC-SDK", version = "125.6422.07", moduleName = "WebRTC")
-    }
-}
-
-android {
-    namespace = "com.softartdev.ktlan.shared"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        pod("WebRTC-SDK", version = libs.versions.webrtc.ios.get(), moduleName = "WebRTC", linkOnly = true)
     }
 }

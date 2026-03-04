@@ -1,8 +1,10 @@
 package com.softartdev.ktlan.data.webrtc
 
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
 
 class LogConsole : IConsole {
+    private val logger = Logger.withTag("IConsole")
+
     override fun printf(text: String, vararg args: Any) {
         val formattedText: String = buildString {
             append(text)
@@ -11,30 +13,26 @@ class LogConsole : IConsole {
                 append(args.joinToString(" "))
             }
         }
-        Napier.d(message = formattedText)
+        logger.d { formattedText }
     }
 
-    override fun d(text: String, vararg args: Any) {
-        printf(text = "⚪️ $text", args = args)
+    override fun debug(text: String, vararg args: Any) {
+        printf("⚪️ $text", *args)
     }
 
-    override fun i(text: String, vararg args: Any) {
-        greenf(text, args)
+    override fun info(text: String, vararg args: Any) {
+        printf("ℹ️ $text", *args)
     }
 
-    override fun e(text: String, vararg args: Any) {
-        redf(text, args)
+    override fun error(text: String, vararg args: Any) {
+        printf("❌ $text", *args)
     }
 
-    override fun greenf(text: String, vararg args: Any) {
-        printf(text = "🟢 $text", args = args)
+    override fun success(text: String, vararg args: Any) {
+        printf("✅ $text", *args)
     }
 
-    override fun bluef(text: String, vararg args: Any) {
-        printf(text = "🔵 $text", args = args)
-    }
-
-    override fun redf(text: String, vararg args: Any) {
-        printf(text = "🔴 $text", args = args)
+    override fun warning(text: String, vararg args: Any) {
+        printf("⚠️ $text", *args)
     }
 }

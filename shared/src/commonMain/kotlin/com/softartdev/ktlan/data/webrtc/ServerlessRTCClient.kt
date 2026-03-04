@@ -1,6 +1,6 @@
 package com.softartdev.ktlan.data.webrtc
 
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
@@ -79,8 +79,8 @@ abstract class ServerlessRTCClient(
                 type = jsonObj[JSON_TYPE]?.jsonPrimitive?.content
                 sdp = jsonObj[JSON_SDP]?.jsonPrimitive?.content
             } catch (e: Exception) {
-                Napier.e("Error deserializing SDP", e)
-                console.redf("Error deserializing SDP: ${e.message}")
+                Logger.withTag("ServerlessRTCClient").e(e) { "Error deserializing SDP" }
+                console.error("Error deserializing SDP: ${e.message}")
             }
             return type to sdp
         }
@@ -92,8 +92,8 @@ abstract class ServerlessRTCClient(
         internal fun deserializeMessage(json: String, console: IConsole): String? = try {
             Json.parseToJsonElement(json).jsonObject[JSON_MESSAGE]?.jsonPrimitive?.content
         } catch (e: Exception) {
-            Napier.e("Error deserializing message", e)
-            console.redf("Error deserializing message: ${e.message}")
+            Logger.withTag("ServerlessRTCClient").e(e) { "Error deserializing message" }
+            console.error("Error deserializing message: ${e.message}")
             null
         }
     }

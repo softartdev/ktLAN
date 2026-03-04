@@ -22,7 +22,7 @@ ktLAN is a Kotlin Multiplatform application that provides LAN communication capa
 - **Koin** for dependency injection
 - **Navigation Compose** for navigation
 - **Ktor** for networking
-- **WebRTC** for peer-to-peer communication
+- **Ktor WebRTC client** (`io.ktor:ktor-client-webrtc`) for peer-to-peer communication
 
 ## Development Setup
 
@@ -48,16 +48,16 @@ ktLAN is a Kotlin Multiplatform application that provides LAN communication capa
 4. Run the application:
    ```bash
    # Desktop
-   ./gradlew :composeApp:desktopRun
+   ./gradlew :app:desktop:desktopRun
    
    # Android
-   ./gradlew :composeApp:assembleDebug
+   ./gradlew :app:android:assembleDebug
    
    # iOS (requires macOS)
-   ./gradlew :composeApp:iosSimulatorArm64Test
+   ./gradlew :app:shared:iosSimulatorArm64Test
    
    # Web (wasmJS)
-   ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+   ./gradlew :app:web:wasmJsBrowserDevelopmentRun
    ```
 
 ## Code Style and Standards
@@ -426,10 +426,10 @@ fun testNavigationBetweenTabs() = runTest {
     composeTestRule.onNodeWithText("Networks").performClick()
     composeTestRule.waitForIdle()
     
-    composeTestRule.onNodeWithText("LAN Chat").performClick()
+    composeTestRule.onNodeWithText("Socket").performClick()
     composeTestRule.waitForIdle()
     
-    composeTestRule.onNodeWithText("LAN Chat").assertExists()
+    composeTestRule.onNodeWithText("Socket").assertExists()
 }
 ```
 
@@ -514,7 +514,7 @@ fun captureScreenshot(rule: ComposeTestRule, filename: String) {
     val file = File(outputDir, filename)
 
     ImageIO.write(bufferedImage, "PNG", file)
-    Napier.d("Screenshot saved to ${file.absolutePath}")
+    Logger.d { "Screenshot saved to ${file.absolutePath}" }
 }
 ```
 
@@ -736,7 +736,7 @@ For UI tests, use proper setup with Koin and lifecycle management:
 ```kotlin
 @Before
 fun setUp() {
-    Napier.base(antilog = DebugAntilog())
+    Logger.setLogWriters(platformLogWriter())
     when (GlobalContext.getKoinApplicationOrNull()) {
         null -> startKoin {
             printLogger(level = Level.DEBUG)
@@ -756,7 +756,7 @@ fun setUp() {
 @After
 fun tearDown() {
     unloadKoinModules(sharedModules + uiTestModules)
-    Napier.takeLogarithm()
+    Logger.setLogWriters(emptyList())
 }
 ```
 
@@ -767,13 +767,13 @@ fun tearDown() {
 ./gradlew test
 
 # Run specific test
-./gradlew :composeApp:desktopTest --tests "*NavigationTest*"
+./gradlew :app:desktop:desktopTest --tests "*NavigationTest*"
 
 # Run tests with coverage
-./gradlew :composeApp:desktopTest --tests "*" --info
+./gradlew :app:desktop:desktopTest --tests "*" --info
 
 # Run tests and generate screenshots
-./gradlew :composeApp:desktopTest --tests "*NavigationTest*"
+./gradlew :app:desktop:desktopTest --tests "*NavigationTest*"
 ```
 
 ## Pull Request Process

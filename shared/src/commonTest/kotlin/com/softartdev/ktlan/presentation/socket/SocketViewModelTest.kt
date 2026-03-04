@@ -8,8 +8,8 @@ import com.softartdev.ktlan.domain.repo.SocketRepoStub
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph
 import com.softartdev.ktlan.presentation.navigation.RouterStub
 import com.softartdev.ktlan.domain.util.CoroutineDispatchersStub
-import com.softartdev.ktlan.domain.util.PrintAntilog
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.platformLogWriter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -26,7 +26,7 @@ class SocketViewModelTest {
     
     @BeforeTest
     fun setup() = runTest {
-        Napier.base(PrintAntilog())
+        Logger.setLogWriters(platformLogWriter())
         testDispatchers = CoroutineDispatchersStub()
         repo = SocketRepoStub(testDispatchers!!)
         val networksRepo = NetworkRepoStub(testDispatchers!!)
@@ -35,7 +35,7 @@ class SocketViewModelTest {
 
     @AfterTest
     fun tearDown() = runTest {
-        Napier.takeLogarithm()
+        Logger.setLogWriters(emptyList())
     }
 
     @Test

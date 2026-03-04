@@ -1,12 +1,13 @@
 package com.softartdev.ktlan.domain.repo
 
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import com.softartdev.ktlan.domain.model.HostModel
-import io.github.aakira.napier.Napier
+import com.softartdev.ktlan.domain.util.KermitKtorLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.get
@@ -21,12 +22,11 @@ import kotlin.coroutines.CoroutineContext
  * Stateless data access layer following Clean Architecture principles.
  */
 open class ScanRepo {
+    private val logger = Logger.withTag("ScanRepo")
     private val client: HttpClient = HttpClient(CIO) {
         install(Logging) {
             level = LogLevel.BODY
-            logger = object : Logger {
-                override fun log(message: String) = Napier.d(tag = "Ktor", message = message)
-            }
+            logger = KermitKtorLogger(Severity.Debug, Logger.withTag("Ktor"))
         }
         followRedirects = true
     }
@@ -46,7 +46,7 @@ open class ScanRepo {
             resultMap[ip] = mutableListOf()
             for (portInt: Int in ports) {
                 val job = coroutineScope.launch {
-                    Napier.d("Scanning port $portInt on $ip")
+                    logger.d { "Scanning port $portInt on $ip" }
                     try {
                         val response = client.get {
                             timeout {
@@ -56,20 +56,20 @@ open class ScanRepo {
                             }
                             url { host = ip; port = portInt }
                         }
-                        Napier.d("$ip:$portInt ✅${response.status.value}:${response.status.description}")
+                        logger.d { "$ip:$portInt ✅${response.status.value}:${response.status.description}" }
                         resultMap[ip]?.add(portInt)
                     } catch (e: ConnectTimeoutException) {
-//                        Napier.e(message = e.message ?: "Connection timeout")
+//                        logger.e { e.message ?: "Connection timeout" }
                     } catch (e: Throwable) {
                         if (e.message?.contains("timeout") == true) {
-//                            Napier.e(message = e.message ?: "$ip:$portInt ❌timeout")
+//                            logger.e { e.message ?: "$ip:$portInt ❌timeout" }
                         } else if (e.message?.contains("Connection refused") == true) {
-//                            Napier.d("$ip:$portInt ❌", e)
+//                            logger.d(e) { "$ip:$portInt ❌" }
                             resultMap[ip]?.add(portInt)
                         } else if (e.message?.contains("Network is unreachable") == true) {
-//                            Napier.d("$ip:$portInt ❌", e)
+//                            logger.d(e) { "$ip:$portInt ❌" }
                         } else {
-                            Napier.e("$ip:$portInt ❌", e)
+                            logger.e(e) { "$ip:$portInt ❌" }
                         }
                     }
                 }
@@ -81,7 +81,7 @@ open class ScanRepo {
             .filter { (_, openPorts) -> openPorts.isNotEmpty() }
             .map { (ip, openPorts) -> HostModel(ip, openPorts.sorted()) }
             .sortedBy(HostModel::ip)
-        Napier.d("Parallel scan completed for range $startIp to $endIp with ${hosts.size} hosts found.")
+        logger.d { "Parallel scan completed for range $startIp to $endIp with ${hosts.size} hosts found." }
         return hosts
     }
 

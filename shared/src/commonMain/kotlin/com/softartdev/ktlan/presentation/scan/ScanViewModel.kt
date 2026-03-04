@@ -6,7 +6,7 @@ import com.softartdev.ktlan.domain.usecase.ScanState
 import com.softartdev.ktlan.domain.usecase.ScanUseCase
 import com.softartdev.ktlan.presentation.navigation.AppNavGraph
 import com.softartdev.ktlan.presentation.navigation.Router
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -18,7 +18,8 @@ class ScanViewModel(
     private val router: Router,
     private val navParameters: AppNavGraph.BottomTab.Scan
 ) : ViewModel() {
-    
+    private val logger = Logger.withTag("ScanViewModel")
+
     // Local UI state (input fields)
     private val _uiState = MutableStateFlow(
         ScanResult.Success()
@@ -78,12 +79,12 @@ class ScanViewModel(
 
     private fun updateStartIp(string: String) {
         _uiState.value = currentSuccessStateOrDefault.copy(startIp = string)
-        Napier.d("Start IP updated to: $string")
+        logger.d { "Start IP updated to: $string" }
     }
 
     private fun updateEndIp(string: String) {
         _uiState.value = currentSuccessStateOrDefault.copy(endIp = string)
-        Napier.d("End IP updated to: $string")
+        logger.d { "End IP updated to: $string" }
     }
 
     private fun updatePorts(string: String) {
@@ -91,13 +92,13 @@ class ScanViewModel(
             .map(String::trim)
             .mapNotNull(String::toIntOrNull)
         _uiState.value = currentSuccessStateOrDefault.copy(ports = ports)
-        Napier.d("Ports updated to: $ports")
+        logger.d { "Ports updated to: $ports" }
     }
 
     private fun resetScan() {
         scanUseCase.resetScan()
         _uiState.value = ScanResult.Success()
-        Napier.d("Scan reset to default values")
+        logger.d { "Scan reset to default values" }
         clearError()
     }
 
@@ -105,12 +106,12 @@ class ScanViewModel(
         if (_combinedState.value is ScanResult.Error) {
             scanUseCase.resetScan()
         } else {
-            Napier.w("No error to clear")
+            logger.w { "No error to clear" }
         }
     }
 
     private fun useAsRemoteHost(address: String) {
         router.bottomNavigate(AppNavGraph.BottomTab.Socket(remoteHost = address))
-        Napier.d("Navigating to Socket with remote host: $address")
+        logger.d { "Navigating to Socket with remote host: $address" }
     }
 }
