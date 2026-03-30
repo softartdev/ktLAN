@@ -237,7 +237,7 @@ fun ConnectContent(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ConnectContentPreview() {
     ConnectContent(
