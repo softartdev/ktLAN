@@ -25,7 +25,6 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     )
@@ -83,7 +82,7 @@ kotlin {
         version = "1.0"
         summary = "Shared Compose UI module"
         homepage = "https://github.com/softartdev/ktLAN"
-        ios.deploymentTarget = "13.0"
+        ios.deploymentTarget = "14.0"
         pod("WebRTC-SDK", version = libs.versions.webrtc.ios.get(), moduleName = "WebRTC", linkOnly = true)
     }
 }

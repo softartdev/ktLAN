@@ -22,7 +22,6 @@ kotlin {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
 
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
 
@@ -93,7 +92,7 @@ kotlin {
         }
         xcodeConfigurationToNativeBuildType["CUSTOM_DEBUG"] = NativeBuildType.DEBUG
         xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] = NativeBuildType.RELEASE
-        ios.deploymentTarget = "13.0"
+        ios.deploymentTarget = "14.0"
         pod("WebRTC-SDK", version = libs.versions.webrtc.ios.get(), moduleName = "WebRTC", linkOnly = true)
     }
 }

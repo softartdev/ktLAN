@@ -8,7 +8,7 @@ Pod::Spec.new do |spec|
     spec.summary                  = 'Compose app for the Kotlin/Native module'
     spec.vendored_frameworks      = 'build/cocoapods/framework/ComposeAppFramework.framework'
     spec.libraries                = 'c++'
-    spec.ios.deployment_target    = '13.0'
+    spec.ios.deployment_target    = '14.0'
     spec.dependency 'WebRTC-SDK', '137.7151.03'
     if !Dir.exist?('build/cocoapods/framework/ComposeAppFramework.framework') || Dir.empty?('build/cocoapods/framework/ComposeAppFramework.framework')
         raise "

@@ -3,7 +3,7 @@ install! 'cocoapods',
 
 target 'iosApp' do
   use_frameworks!
-  platform :ios, '13.0'
+  platform :ios, '14.0'
   pod 'ComposeAppCocoaPod', :path => '../ios-kit'
 #   pod 'AppSharedCocoaPod', :path => '../shared'
 end
